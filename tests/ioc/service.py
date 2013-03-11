@@ -7,4 +7,4 @@ class Fake(object):
 
 class Foo(object):
     def __init__(self, fake):
-        self.fake
+        self.fake = fake
