@@ -1,0 +1,15 @@
+parameters:
+    foo.bar: parameter 1
+
+services:
+    fake:
+        class: tests.ioc.service.Fake
+        arguments: 
+            - argument 1
+        kargs:
+            param: here a parameter
+
+    foo:
+        class: tests.ioc.service.Foo
+        arguments: ["@fake"]
+        kargs: {}
