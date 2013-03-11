@@ -63,14 +63,15 @@ class TestContainerBuilder(unittest.TestCase):
 
         c = self.container.get_class(definition)
         
-        self.assertEquals( c.__name__, tests.ioc.service.Fake.__name__)
+        self.assertEquals(c.__name__, tests.ioc.service.Fake.__name__)
 
 
     def test_get_instance(self):
         definition = ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'})
+        container = ioc.component.Container()
 
         c = self.container.get_class(definition)
-        i = self.container.get_instance(c, definition)
+        i = self.container.get_instance(c, definition, container)
 
         self.assertIs(type(i), tests.ioc.service.Fake)
         self.assertEquals(True, i.mandatory)
@@ -79,12 +80,16 @@ class TestContainerBuilder(unittest.TestCase):
     def test_get_container(self):        
         self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'}))
         self.container.add('service.id.2', ioc.component.Definition('tests.ioc.service.Fake', [False], {'param': 'hello'}))
+        self.container.add('service.id.3', ioc.component.Definition('tests.ioc.service.Foo', [ioc.component.Reference('service.id.2')]))
 
         container = ioc.component.Container()
         parameter_resolver = ioc.component.ParameterResolver()
 
         self.container.build_container(container, parameter_resolver)
 
-        self.assertEquals(2, len(container.services))
+        self.assertEquals(3, len(container.services))
         self.assertTrue(container.has('service.id.2'))
         self.assertIsInstance(container.get('service.id.2'), tests.ioc.service.Fake)
+        self.assertIsInstance(container.get('service.id.3'), tests.ioc.service.Foo)
+
+        self.assertEquals(container.get('service.id.3').fake, container.get('service.id.2'))

@@ -2,6 +2,8 @@
 
 import ioc.exceptions
 import importlib
+import ioc.helper
+
 
 class Reference(object):
     def __init__(self, id):
@@ -38,7 +40,7 @@ class Container(object):
 
     def has(self, id):
         return id in self.services
-        
+
     def add(self, id, service):
         self.services[id] = service
 
@@ -51,7 +53,7 @@ class Container(object):
 class ContainerBuilder(Container):
     def build_container(self, container, parameter_resolver):
         for id, definition in self.services.iteritems():
-            container.add(id, self.get_service(definition))
+            container.add(id, self.get_service(definition, container))
 
     def get_class(self, definition):
         class_name = definition.klass.split(".")[-1]
@@ -61,13 +63,28 @@ class ContainerBuilder(Container):
 
         return getattr(m, class_name)
 
-    def get_instance(self, klass, definition):
-        return klass(*definition.arguments, **definition.kwargs)
+    def get_instance(self, klass, definition, container):
+        return klass(*self.set_services(definition.arguments, container), **self.set_services(definition.kwargs, container))
 
-    def get_service(self, definition):
-        return self.get_instance(self.get_class(definition), definition)
+    def get_service(self, definition, container):
+        return self.get_instance(self.get_class(definition), definition, container)
 
-        
+    def set_service(self, value, container):
+        if isinstance(value, Reference) and container.has(value.id):
+            return container.get(value.id)
+        elif isinstance(value, Reference):
+            return self.get_service(self.get(value.id), container)
+
+        if ioc.helper.is_iterable(value):
+            return self.set_services(value, container)
+
+        return value
+
+    def set_services(self, arguments, container):
+        for pos in ioc.helper.get_keys(arguments):
+            arguments[pos] = self.set_service(arguments[pos], container)
+
+        return arguments
         
 
 
