@@ -4,3 +4,7 @@
 
 class UnknownService(Exception):
     pass
+
+class CyclicReference(Exception):
+    pass
+    

@@ -93,3 +93,14 @@ class TestContainerBuilder(unittest.TestCase):
         self.assertIsInstance(container.get('service.id.3'), tests.ioc.service.Foo)
 
         self.assertEquals(container.get('service.id.3').fake, container.get('service.id.2'))
+
+    def test_cyclic_reference(self):
+        self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Foo', [ioc.component.Reference('service.id.1')]))
+
+        container = ioc.component.Container()
+        parameter_resolver = ioc.component.ParameterResolver()
+
+        with self.assertRaises(ioc.exceptions.CyclicReference):
+            self.container.build_container(container, parameter_resolver)
+
+        
