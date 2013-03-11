@@ -1,11 +1,13 @@
+# vim: set fileencoding=utf-8 :
+
 import unittest
-import ioc.component, ioc.exceptions
+import ioc.component, ioc.exceptions, exceptions
+import tests.ioc.service
 
 class TestDefinition(unittest.TestCase):
     def test_init(self):
         definition = ioc.component.Definition()
-
-        self.assertIsNone(definition.clazz)
+        self.assertIsNone(definition.klass)
         self.assertEquals(0, len(definition.arguments))
 
 class TestParameterHolder(unittest.TestCase):
@@ -48,3 +50,41 @@ class TestContainer(unittest.TestCase):
 
         with self.assertRaises(ioc.exceptions.UnknownService):
             self.container.get('fake')
+
+class TestContainerBuilder(unittest.TestCase):
+    def setUp(self):
+        self.container = ioc.component.ContainerBuilder()
+
+    def test_get_class(self):
+        with self.assertRaises(exceptions.AttributeError):
+            self.container.get_class(ioc.component.Definition('tests.ioc.component.Fake'))
+
+        definition = ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'})
+
+        c = self.container.get_class(definition)
+        
+        self.assertEquals( c.__name__, tests.ioc.service.Fake.__name__)
+
+
+    def test_get_instance(self):
+        definition = ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'})
+
+        c = self.container.get_class(definition)
+        i = self.container.get_instance(c, definition)
+
+        self.assertIs(type(i), tests.ioc.service.Fake)
+        self.assertEquals(True, i.mandatory)
+        self.assertEquals('salut', i.param)
+
+    def test_get_container(self):        
+        self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'}))
+        self.container.add('service.id.2', ioc.component.Definition('tests.ioc.service.Fake', [False], {'param': 'hello'}))
+
+        container = ioc.component.Container()
+        parameter_resolver = ioc.component.ParameterResolver()
+
+        self.container.build_container(container, parameter_resolver)
+
+        self.assertEquals(2, len(container.services))
+        self.assertTrue(container.has('service.id.2'))
+        self.assertIsInstance(container.get('service.id.2'), tests.ioc.service.Fake)

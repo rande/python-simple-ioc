@@ -1,3 +1,5 @@
+# vim: set fileencoding=utf-8 :
+
 import os
 import ioc.loader, ioc.component
 import unittest

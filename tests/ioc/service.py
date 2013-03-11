@@ -1,4 +1,4 @@
-
+# vim: set fileencoding=utf-8 :
 
 class Fake(object):
     def __init__(self, mandatory, param=None):

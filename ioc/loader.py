@@ -1,3 +1,5 @@
+# vim: set fileencoding=utf-8 :
+
 import yaml
 
 from ioc.component import Definition, Reference
