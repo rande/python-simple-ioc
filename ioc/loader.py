@@ -27,8 +27,8 @@ class YamlLoader(object):
 
                 definition = Definition(
                     clazz=meta['class'], 
-                    arguments=meta['arguments'], 
-                    kwargs=meta['kwargs']
+                    arguments=self.set_references(meta['arguments']), 
+                    kwargs=self.set_references(meta['kwargs'])
                 )
 
                 container_builder.add(id, definition)
@@ -45,6 +45,8 @@ class YamlLoader(object):
 
         if self.is_iterable(value):
             return self.set_references(value)
+
+        return value
 
     def get_keys(self, arguments):
         if isinstance(arguments, (list)):
