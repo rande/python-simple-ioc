@@ -37,6 +37,7 @@ class Container(object):
     def __init__(self):
         self.services = {}
         self.parameters = ParameterHolder()
+        self.stack = []
 
     def has(self, id):
         return id in self.services
@@ -53,7 +54,7 @@ class Container(object):
 class ContainerBuilder(Container):
     def build_container(self, container, parameter_resolver):
         for id, definition in self.services.iteritems():
-            container.add(id, self.get_service(definition, container))
+            container.add(id, self.get_service(id, definition, container))
 
     def get_class(self, definition):
         class_name = definition.klass.split(".")[-1]
@@ -66,14 +67,23 @@ class ContainerBuilder(Container):
     def get_instance(self, klass, definition, container):
         return klass(*self.set_services(definition.arguments, container), **self.set_services(definition.kwargs, container))
 
-    def get_service(self, definition, container):
-        return self.get_instance(self.get_class(definition), definition, container)
+    def get_service(self, id, definition, container):
+        if id in self.stack:
+            raise ioc.exceptions.CyclicReference(" -> ".join(self.stack) + " -> " + id)
+
+        self.stack.append(id)
+
+        instance = self.get_instance(self.get_class(definition), definition, container)
+        
+        self.stack.pop()
+
+        return instance
 
     def set_service(self, value, container):
         if isinstance(value, Reference) and container.has(value.id):
             return container.get(value.id)
         elif isinstance(value, Reference):
-            return self.get_service(self.get(value.id), container)
+            return self.get_service(value.id, self.get(value.id), container)
 
         if ioc.helper.is_iterable(value):
             return self.set_services(value, container)
