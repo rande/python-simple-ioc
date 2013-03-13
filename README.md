@@ -38,5 +38,4 @@ import ioc
 container = ioc.build(['service.yml'])
 
 foo = container.get('foo')
-
 ```

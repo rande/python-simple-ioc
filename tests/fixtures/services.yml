@@ -1,11 +1,11 @@
 parameters:
-    foo.bar: parameter 1
+    foo.bar: argument 1
 
 services:
     fake:
         class: tests.ioc.service.Fake
         arguments: 
-            - argument 1
+            - "%foo.bar%"
         kargs:
             param: here a parameter
 

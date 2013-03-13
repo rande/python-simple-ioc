@@ -3,6 +3,7 @@
 import ioc.exceptions
 import importlib
 import ioc.helper
+import re
 
 
 class Reference(object):
@@ -24,14 +25,37 @@ class ParameterHolder(object):
         self.parameters[key] = value
 
     def __getitem__(self, key):
-        return self.parameters[key]
+        if key in self.parameters:
+            return self.parameters[key]
+
+        return None
 
     def __delitem__(self, key):
         del self.parameters[key]
 
 class ParameterResolver(object):
+    def __init__(self):
+        self.re = re.compile("%%|%([^%\s]+)%")
+
     def resolve(self, parameter, parameter_holder):
-        pass
+        if not type(parameter) == str:
+            return parameter
+
+        if ioc.helper.is_iterable(parameter):
+            for key in ioc.helper.get_keys(parameter):
+                parameter[key] = self.resolve(parameter[key], parameter_holder)
+
+        else:
+            def replace(matchobj):
+                if matchobj.group(0) == '%%':
+                    return '%'
+
+                return parameter_holder[matchobj.group(1)]
+            
+            parameter, num = re.subn(self.re, replace, parameter)
+
+        return parameter
+
 
 class Container(object):
     def __init__(self):
@@ -52,7 +76,13 @@ class Container(object):
         return self.services[id]
 
 class ContainerBuilder(Container):
-    def build_container(self, container, parameter_resolver):
+    def __init__(self):
+        self.services = {}
+        self.parameters = ParameterHolder()
+        self.stack = []
+        self.parameter_resolver = ioc.component.ParameterResolver()
+
+    def build_container(self, container):
         for id, definition in self.services.iteritems():
             self.get_service(id, definition, container)
 
@@ -91,7 +121,7 @@ class ContainerBuilder(Container):
         if ioc.helper.is_iterable(value):
             return self.set_services(value, container)
 
-        return value
+        return self.parameter_resolver.resolve(value, self.parameters)
 
     def set_services(self, arguments, container):
         for pos in ioc.helper.get_keys(arguments):
