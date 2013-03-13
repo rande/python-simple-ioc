@@ -32,6 +32,41 @@ class TestParameterResolver(unittest.TestCase):
     def test_init(self):
         parameter_resolver = ioc.component.ParameterResolver()
 
+    def test_parameters(self):
+        holder = ioc.component.ParameterHolder()
+        holder['bonjour'] = 'hello'
+        holder['le_monde'] = 'world'
+
+        parameter_resolver = ioc.component.ParameterResolver()
+        
+        self.assertEquals("hello", parameter_resolver.resolve("%bonjour%", holder))
+        self.assertEquals("hello world", parameter_resolver.resolve("%bonjour% %le_monde%", holder))
+        self.assertEquals(['hello world', 'hello world'], parameter_resolver.resolve(["%bonjour% %le_monde%", "%bonjour% %le_monde%"], holder))        
+
+    def test_parameters(self):
+        holder = ioc.component.ParameterHolder()
+        parameter_resolver = ioc.component.ParameterResolver()
+        
+        self.assertEquals(1, parameter_resolver.resolve(1, holder))
+        self.assertEquals(1.0, parameter_resolver.resolve(1.0, holder))
+        self.assertEquals(True, parameter_resolver.resolve(True, holder))
+        
+
+    def test_escaping(self):
+        holder = ioc.component.ParameterHolder()
+        holder['bonjour'] = 'hello'
+        holder['le_monde'] = 'world'
+
+        parameter_resolver = ioc.component.ParameterResolver()
+
+        self.assertEquals("%hello", parameter_resolver.resolve("%%%bonjour%", holder))
+        self.assertEquals("%hello world %", parameter_resolver.resolve("%%%bonjour% %le_monde% %", holder))
+
+        # Recurive parameters ?? => not now
+        # holder['foo'] = 'bar'
+        # holder['baz'] = '%%%foo% %foo%%% %%foo%% %%%foo%%%'
+        # self.assertEquals("%%bar bar%% %%foo%% %%bar%%", parameter_resolver.resolve('%baz%', holder))
+
 
 class TestContainer(unittest.TestCase):
     def setUp(self):
@@ -83,9 +118,8 @@ class TestContainerBuilder(unittest.TestCase):
         self.container.add('service.id.3', ioc.component.Definition('tests.ioc.service.Foo', [ioc.component.Reference('service.id.2')]))
 
         container = ioc.component.Container()
-        parameter_resolver = ioc.component.ParameterResolver()
 
-        self.container.build_container(container, parameter_resolver)
+        self.container.build_container(container)
 
         self.assertEquals(3, len(container.services))
         self.assertTrue(container.has('service.id.2'))
@@ -101,6 +135,6 @@ class TestContainerBuilder(unittest.TestCase):
         parameter_resolver = ioc.component.ParameterResolver()
 
         with self.assertRaises(ioc.exceptions.CyclicReference):
-            self.container.build_container(container, parameter_resolver)
+            self.container.build_container(container)
 
         

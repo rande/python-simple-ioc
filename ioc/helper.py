@@ -32,9 +32,7 @@ def build(files):
 
             loader.load(file, container_builder)
 
-    parameter_resolver = ioc.component.ParameterResolver()
-    
     container = ioc.component.Container()
-    container_builder.build_container(container, parameter_resolver)
+    container_builder.build_container(container)
 
     return container
