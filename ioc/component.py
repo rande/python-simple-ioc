@@ -4,6 +4,7 @@ import ioc.exceptions
 import importlib
 import ioc.helper
 import re
+import exceptions
 
 
 class Reference(object):
@@ -45,13 +46,16 @@ class ParameterResolver(object):
             for key in ioc.helper.get_keys(parameter):
                 parameter[key] = self.resolve(parameter[key], parameter_holder)
 
+        elif parameter[0:1] == '%' and parameter[-1] == '%' and parameter[1:-1] in parameter_holder.parameters:
+            return parameter_holder[parameter[1:-1]]
+
         else:
             def replace(matchobj):
                 if matchobj.group(0) == '%%':
                     return '%'
 
                 return parameter_holder[matchobj.group(1)]
-            
+
             parameter, num = re.subn(self.re, replace, parameter)
 
         return parameter
@@ -124,6 +128,7 @@ class ContainerBuilder(Container):
         return self.parameter_resolver.resolve(value, self.parameters)
 
     def set_services(self, arguments, container):
+
         for pos in ioc.helper.get_keys(arguments):
             arguments[pos] = self.set_service(arguments[pos], container)
 
