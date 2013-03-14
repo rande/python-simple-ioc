@@ -50,7 +50,15 @@ class TestParameterResolver(unittest.TestCase):
         self.assertEquals(1, parameter_resolver.resolve(1, holder))
         self.assertEquals(1.0, parameter_resolver.resolve(1.0, holder))
         self.assertEquals(True, parameter_resolver.resolve(True, holder))
-        
+    
+    def test_replace_array(self):
+        holder = ioc.component.ParameterHolder()
+        holder['array'] = [4, 2]
+
+        parameter_resolver = ioc.component.ParameterResolver()
+
+        self.assertEquals([4, 2], parameter_resolver.resolve("%array%", holder))
+
 
     def test_escaping(self):
         holder = ioc.component.ParameterHolder()
