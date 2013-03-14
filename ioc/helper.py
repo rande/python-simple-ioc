@@ -2,6 +2,7 @@
 
 import ioc.component
 import ioc.loader
+import logging
 
 def is_scalar(value):
     return isinstance(value, (str))
@@ -18,21 +19,29 @@ def get_keys(arguments):
 
     return []
 
-def build(files):
-    container_builder = ioc.component.ContainerBuilder()
+def build(files, logger=None):
+
+    if not logger:
+        logger = logging.getLogger('ioc')
+
+    container_builder = ioc.component.ContainerBuilder(logger=logger)
     
     loaders = [
         ioc.loader.YamlLoader()
     ]
 
+    logger.debug("Loading files")
     for file in files:
+        logger.debug("Search loader for file %s" % file)
         for loader in loaders:
             if not loader.support(file):
                 continue
 
+            logger.debug("Found loader %s for file %s" % (loader, file))
             loader.load(file, container_builder)
 
     container = ioc.component.Container()
+
     container_builder.build_container(container)
 
     return container
