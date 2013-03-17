@@ -19,14 +19,21 @@ class TestParameterHolder(unittest.TestCase):
     def test_item(self):
         parameter_holder = ioc.component.ParameterHolder()
         
-        parameter_holder['foo'] = 'bar'
+        parameter_holder.set('foo', 'bar')
 
         self.assertEquals(1, len(parameter_holder.parameters))
 
-        self.assertEquals('bar', parameter_holder['foo'])
-        del parameter_holder['foo']
+        self.assertEquals('bar', parameter_holder.get('foo'))
+        parameter_holder.remove('foo')
 
         self.assertEquals(0, len(parameter_holder.parameters))
+
+    def test_missing_parameter(self):
+
+        parameter_holder = ioc.component.ParameterHolder()
+
+        with self.assertRaises(ioc.exceptions.UnknownParameter):
+            parameter_holder.get('error')
         
 class TestParameterResolver(unittest.TestCase):
     def test_init(self):
@@ -53,7 +60,7 @@ class TestParameterResolver(unittest.TestCase):
     
     def test_replace_array(self):
         holder = ioc.component.ParameterHolder()
-        holder['array'] = [4, 2]
+        holder.set('array', [4, 2])
 
         parameter_resolver = ioc.component.ParameterResolver()
 
@@ -62,8 +69,8 @@ class TestParameterResolver(unittest.TestCase):
 
     def test_escaping(self):
         holder = ioc.component.ParameterHolder()
-        holder['bonjour'] = 'hello'
-        holder['le_monde'] = 'world'
+        holder.set('bonjour', 'hello')
+        holder.set('le_monde', 'world')
 
         parameter_resolver = ioc.component.ParameterResolver()
 

@@ -22,17 +22,20 @@ class ParameterHolder(object):
     def __init__(self, parameters={}):
         self.parameters = parameters
 
-    def __setitem__(self, key, value):
+    def set(self, key, value):
         self.parameters[key] = value
 
-    def __getitem__(self, key):
+    def get(self, key):
         if key in self.parameters:
             return self.parameters[key]
 
-        return None
+        raise ioc.exceptions.UnknownParameter(key)
 
-    def __delitem__(self, key):
+    def remove(self, key):
         del self.parameters[key]
+
+    def has(self, key):
+        return key in self.parameters
 
 class ParameterResolver(object):
     def __init__(self, logger=None):
@@ -47,18 +50,18 @@ class ParameterResolver(object):
             for key in ioc.helper.get_keys(parameter):
                 parameter[key] = self.resolve(parameter[key], parameter_holder)
 
-        elif parameter[0:1] == '%' and parameter[-1] == '%' and parameter[1:-1] in parameter_holder.parameters:
+        elif parameter[0:1] == '%' and parameter[-1] == '%' and parameter_holder.has(parameter[1:-1]):
             if self.logger:
                 self.logger.debug("Match parameter: %s" % parameter[1:-1])
 
-            return parameter_holder[parameter[1:-1]]
+            return parameter_holder.get(parameter[1:-1])
 
         else:
             def replace(matchobj):
                 if matchobj.group(0) == '%%':
                     return '%'
 
-                return parameter_holder[matchobj.group(1)]
+                return parameter_holder.get(matchobj.group(1))
 
             if self.logger:
                 self.logger.debug("Start resolving parameter: %s" % parameter)

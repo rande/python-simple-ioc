@@ -5,6 +5,9 @@
 class UnknownService(Exception):
     pass
 
+class UnknownParameter(Exception):
+    pass
+
 class CyclicReference(Exception):
     pass
     
