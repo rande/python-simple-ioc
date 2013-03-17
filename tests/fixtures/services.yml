@@ -8,6 +8,9 @@ services:
             - "%foo.bar%"
         kargs:
             param: here a parameter
+        calls:
+             - [ set_ok, [ false ]]
+             - [ set_ok, [ true ], {arg2: "arg"} ]
 
     foo:
         class: tests.ioc.service.Foo

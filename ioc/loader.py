@@ -28,11 +28,29 @@ class YamlLoader(object):
                 if 'kwargs' not in meta:
                     meta['kwargs'] = {}
 
+                if 'calls' not in meta:
+                    meta['calls'] = []
+
                 definition = Definition(
                     clazz=meta['class'], 
                     arguments=self.set_references(meta['arguments']), 
                     kwargs=self.set_references(meta['kwargs'])
                 )
+
+                for call in meta['calls']:
+                    if len(call) == 0:
+                        continue
+
+                    if len(call) == 2:
+                        call.append({})
+
+                    if len(call) == 1:
+                        call.append([])
+                        call.append({})
+
+                    definition.method_calls.append(
+                        (call[0], call[1], call[2])
+                    )
 
                 container_builder.add(id, definition)
 

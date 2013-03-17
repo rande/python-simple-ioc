@@ -28,6 +28,17 @@ class TestYamlLoader(unittest.TestCase):
         self.assertIsInstance(builder.get('fake'), ioc.component.Definition)
         self.assertIsInstance(builder.get('foo').arguments[0], ioc.component.Reference)
 
+        self.assertEquals(2, len(builder.get('fake').method_calls))
+
+        self.assertEquals('set_ok', builder.get('fake').method_calls[0][0])
+        self.assertEquals([False], builder.get('fake').method_calls[0][1])
+        self.assertEquals({}, builder.get('fake').method_calls[0][2])
+
+        self.assertEquals('set_ok', builder.get('fake').method_calls[1][0])
+        self.assertEquals([True], builder.get('fake').method_calls[1][1])
+        self.assertEquals({'arg2': 'arg'}, builder.get('fake').method_calls[1][2])
+
+
     def test_reference(self):
 
         loader = ioc.loader.YamlLoader()

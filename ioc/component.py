@@ -119,6 +119,14 @@ class ContainerBuilder(Container):
 
         instance = klass(*self.set_services(definition.arguments, container), **self.set_services(definition.kwargs, container))
 
+        for call in definition.method_calls:
+            method, args, kwargs = call
+
+            if self.logger:
+                self.logger.debug("Call method: %s on class: %s" % (method, klass))
+
+            getattr(instance, method)(*self.set_services(args, container), **self.set_services(kwargs, container))
+
         return instance
 
     def get_service(self, id, definition, container):

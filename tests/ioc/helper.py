@@ -16,3 +16,10 @@ class TestHelper(unittest.TestCase):
         self.assertEquals(2, len(container.services))
         self.assertEquals(container.get('foo').fake, container.get('fake'))
         self.assertEquals('argument 1', container.get('fake').mandatory)
+
+        self.ok = True
+        self.arg2 = True
+
+        fake = container.get('fake')
+        self.assertEquals(True, fake.ok)
+        self.assertEquals("arg", fake.arg2)
