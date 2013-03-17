@@ -14,7 +14,7 @@ class YamlLoader(object):
 
         if 'parameters' in data:
             for key, value in data['parameters'].iteritems():
-                container_builder.parameters[key] = value
+                container_builder.parameters.set(key, value)
 
         if 'services' in data:
             for id, meta in data['services'].iteritems():
