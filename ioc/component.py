@@ -5,6 +5,7 @@ import importlib
 import ioc.helper
 import re
 import exceptions
+import inspect
 
 class Reference(object):
     def __init__(self, id):
@@ -113,6 +114,8 @@ class ContainerBuilder(Container):
     def build_container(self, container):
         if self.logger:
             self.logger.debug("Start building the container")
+
+        container.add("service_container", container)
 
         for name, config in self.extensions.iteritems():
             name = "%s.di.Extension" % name

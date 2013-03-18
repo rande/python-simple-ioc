@@ -137,7 +137,7 @@ class TestContainerBuilder(unittest.TestCase):
 
         self.container.build_container(container)
 
-        self.assertEquals(3, len(container.services))
+        self.assertEquals(4, len(container.services))
         self.assertTrue(container.has('service.id.2'))
         self.assertIsInstance(container.get('service.id.2'), tests.ioc.service.Fake)
         self.assertIsInstance(container.get('service.id.3'), tests.ioc.service.Foo)
