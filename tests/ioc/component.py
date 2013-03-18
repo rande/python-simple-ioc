@@ -131,7 +131,7 @@ class TestContainerBuilder(unittest.TestCase):
     def test_get_container(self):        
         self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'}))
         self.container.add('service.id.2', ioc.component.Definition('tests.ioc.service.Fake', [False], {'param': 'hello'}))
-        self.container.add('service.id.3', ioc.component.Definition('tests.ioc.service.Foo', [ioc.component.Reference('service.id.2')]))
+        self.container.add('service.id.3', ioc.component.Definition('tests.ioc.service.Foo', [ioc.component.Reference('service.id.2'), None]))
 
         container = ioc.component.Container()
 
@@ -145,11 +145,10 @@ class TestContainerBuilder(unittest.TestCase):
         self.assertEquals(container.get('service.id.3').fake, container.get('service.id.2'))
 
     def test_cyclic_reference(self):
-        self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Foo', [ioc.component.Reference('service.id.1')]))
+        self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Foo', [ioc.component.Reference('service.id.1'), None]))
 
         container = ioc.component.Container()
-        parameter_resolver = ioc.component.ParameterResolver()
-
+        
         with self.assertRaises(ioc.exceptions.CyclicReference):
             self.container.build_container(container)
 
