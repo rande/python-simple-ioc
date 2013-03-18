@@ -13,7 +13,7 @@ class TestHelper(unittest.TestCase):
             "%s/../fixtures/services.yml" % current_dir
         ])
 
-        self.assertEquals(3, len(container.services))
+        self.assertEquals(4, len(container.services))
         self.assertEquals(container.get('foo').fake, container.get('fake'))
         self.assertEquals('argument 1', container.get('fake').mandatory)
 
@@ -23,3 +23,5 @@ class TestHelper(unittest.TestCase):
         fake = container.get('fake')
         self.assertEquals(True, fake.ok)
         self.assertEquals("arg", fake.arg2)
+
+        self.assertTrue(container.get('foo').weak_reference == container.get('weak_reference'))

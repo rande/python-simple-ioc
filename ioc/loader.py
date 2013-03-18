@@ -2,7 +2,7 @@
 
 import yaml
 
-from ioc.component import Definition, Reference
+from ioc.component import Definition, Reference, WeakReference
 import ioc.helper
 
 class YamlLoader(object):
@@ -63,6 +63,9 @@ class YamlLoader(object):
     def set_reference(self, value):
         if ioc.helper.is_scalar(value) and value[0:1] == '@':
             return Reference(value[1:])
+
+        if ioc.helper.is_scalar(value) and value[0:2] == '#@':
+            return WeakReference(value[2:])
 
         if ioc.helper.is_iterable(value):
             return self.set_references(value)

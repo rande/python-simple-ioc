@@ -14,5 +14,8 @@ services:
 
     foo:
         class: tests.ioc.service.Foo
-        arguments: ["@fake"]
+        arguments: ["@fake", "#@weak_reference"]
         kargs: {}
+
+    weak_reference:
+        class: tests.ioc.service.WeakReference

@@ -1,16 +1,53 @@
 # vim: set fileencoding=utf-8 :
 
-import ioc.exceptions
-import importlib
-import ioc.helper
-import re
-import exceptions
-import inspect
+import ioc.exceptions, ioc.helper
+import re, exceptions
+import importlib, inspect
+
+
+class Proxy(object):
+    def __init__(self, container, id):
+        object.__setattr__(self, "_container", container)
+        object.__setattr__(self, "_id", id)
+        object.__setattr__(self, "_ref", None)
+    
+    def __get_ref(self):
+        if object.__getattribute__(self, "_ref"):
+            return object.__getattribute__(self, "_ref")
+
+        id = object.__getattribute__(self, "_id")
+        service = object.__getattribute__(self, "_container").get(id)
+
+        object.__setattr__(self, "_ref", service)
+
+    def __getattribute__(self, name):
+        return getattr(self.__get_ref(), name)
+
+    def __delattr__(self, name):
+        delattr(self.__get_ref(), name)
+
+    def __setattr__(self, name, value):
+        setattr(self.__get_ref(), name, value)
+    
+    def __nonzero__(self):
+        self._build()
+        return bool(self.__get_ref())
+
+    def __str__(self):
+        self._build()
+        return str(self.__get_ref())
+
+    def __repr__(self):
+        self._build()
+        return repr(self.__get_ref())
 
 class Reference(object):
     def __init__(self, id):
         self.id = id
-        
+
+class WeakReference(Reference):
+    pass
+
 class Definition(object):
     def __init__(self, clazz=None, arguments={}, kwargs={}):
         self.module = None
@@ -151,6 +188,7 @@ class ContainerBuilder(Container):
         if inspect.isclass(klass):
             args = self.set_services(definition.arguments, container)
             kwargs = self.set_services(definition.kwargs, container)
+
             instance = klass(*args, **kwargs)
         else:
             # module object ...
@@ -191,9 +229,15 @@ class ContainerBuilder(Container):
         return instance
 
     def set_service(self, value, container):
-        
+
+        if isinstance(value, (Reference, WeakReference)) and not self.has(value.id):
+            raise ioc.exceptions.UnknownService(value.id)
+
         if isinstance(value, Reference) and not container.has(value.id):
             return self.get_service(value.id, self.get(value.id), container)
+
+        if isinstance(value, WeakReference) and not container.has(value.id):
+            return container.add(id, Proxy(container, value.id))
 
         if isinstance(value, Reference) and container.has(value.id):
             return container.get(value.id)

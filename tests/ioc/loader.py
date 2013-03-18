@@ -20,7 +20,7 @@ class TestYamlLoader(unittest.TestCase):
         loader = ioc.loader.YamlLoader()
         loader.load("%s/../fixtures/services.yml" % current_dir, builder)
 
-        self.assertEquals(2, len(builder.services))
+        self.assertEquals(3, len(builder.services))
         self.assertTrue('foo' in builder.services)
         self.assertTrue('fake' in builder.services)
 
@@ -43,12 +43,13 @@ class TestYamlLoader(unittest.TestCase):
 
         loader = ioc.loader.YamlLoader()
         
-        arguments = ['@fake', ['@hello'], 1]
+        arguments = ['@fake', ['@hello', '#@weak_reference'], 1]
         
         loader.set_references(arguments)
 
         self.assertIsInstance(arguments[0], ioc.component.Reference)
         self.assertIsInstance(arguments[1][0], ioc.component.Reference)
+        self.assertIsInstance(arguments[1][1], ioc.component.WeakReference)
         self.assertEquals(arguments[2], 1)
 
         arguments = {'fake': '@hello', 'boo': ['@fake']}
