@@ -12,6 +12,12 @@ class YamlLoader(object):
     def load(self, file, container_builder):
         data = yaml.load(open(file).read())
 
+        for extension, config in data.iteritems():
+            if extension in ['parameters', 'services']:
+                continue
+
+            container_builder.add_extension(extension, config)
+
         if 'parameters' in data:
             for key, value in data['parameters'].iteritems():
                 container_builder.parameters.set(key, value)
@@ -49,7 +55,7 @@ class YamlLoader(object):
                         call.append({})
 
                     definition.method_calls.append(
-                        (call[0], call[1], call[2])
+                        (call[0], self.set_references(call[1]), self.set_references(call[2]))
                     )
 
                 container_builder.add(id, definition)
