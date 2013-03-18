@@ -6,14 +6,23 @@ import ioc.helper
 import re
 import exceptions
 
-
 class Reference(object):
     def __init__(self, id):
         self.id = id
         
 class Definition(object):
     def __init__(self, clazz=None, arguments={}, kwargs={}):
-        self.klass = clazz
+        self.module = None
+        self.function = None
+
+        if clazz:
+            if isinstance(clazz, list):
+                self.module = clazz[0]
+                self.function = clazz[1]
+            else:
+                self.module = ".".join(clazz.split(".")[0:-1])
+                self.function = clazz.split(".")[-1]
+
         self.arguments = arguments
         self.kwargs = kwargs
         self.method_calls = []
@@ -96,10 +105,23 @@ class ContainerBuilder(Container):
         self.stack = []
         self.logger = logger
         self.parameter_resolver = ioc.component.ParameterResolver(logger=logger)
+        self.extensions = {}
+
+    def add_extension(self, name, config):
+        self.extensions[name] = config
 
     def build_container(self, container):
         if self.logger:
             self.logger.debug("Start building the container")
+
+        for name, config in self.extensions.iteritems():
+            name = "%s.di.Extension" % name
+
+            if self.logger:
+                self.logger.debug("Load extension %s" % name)
+
+            extension = self.get_class(Definition(name))()
+            extension.load(config, self)
 
         for id, definition in self.services.iteritems():
             self.get_service(id, definition, container)
@@ -108,19 +130,28 @@ class ContainerBuilder(Container):
             self.logger.debug("Building container is over!")
 
     def get_class(self, definition):
-        class_name = definition.klass.split(".")[-1]
-        module_name = ".".join(definition.klass.split(".")[0:-1])
+        m = importlib.import_module(definition.module)
 
-        m = importlib.import_module(module_name)
+        f = definition.function.split(".")
+        clazz = getattr(m, f[0])
 
-        return getattr(m, class_name)
+        if len(f) == 2:
+            return getattr(clazz, f[1])
+
+        return clazz
 
     def get_instance(self, klass, definition, container):
 
         if self.logger:
             self.logger.debug("Create instance for %s" % klass)
 
-        instance = klass(*self.set_services(definition.arguments, container), **self.set_services(definition.kwargs, container))
+        if inspect.isclass(klass):
+            args = self.set_services(definition.arguments, container)
+            kwargs = self.set_services(definition.kwargs, container)
+            instance = klass(*args, **kwargs)
+        else:
+            # module object ...
+            instance = klass
 
         for call in definition.method_calls:
             method, args, kwargs = call
@@ -130,12 +161,15 @@ class ContainerBuilder(Container):
 
             getattr(instance, method)(*self.set_services(args, container), **self.set_services(kwargs, container))
 
+        if self.logger:
+            self.logger.debug("End creating instance %s" % klass)
+
         return instance
 
     def get_service(self, id, definition, container):
 
         if self.logger:
-            self.logger.debug("Get service: id=%s, class=%s" % (id, definition.klass))
+            self.logger.debug("Get service: id=%s, module=%s, function=%s" % (id, definition.module, definition.function))
 
         if container.has(id):
             return container.get(id)
