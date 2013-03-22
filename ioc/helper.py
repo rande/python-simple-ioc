@@ -19,6 +19,21 @@ def get_keys(arguments):
 
     return []
 
+class Dict(object):
+    def __init__(self, data):
+        self.data = data
+
+    def get(self, name, default=None):
+        data = self.data
+        for name in name.split("."):
+            if name in data:
+                data = data[name]
+
+            else:
+                return default
+
+        return data
+
 def build(files, logger=None):
 
     if not logger:
