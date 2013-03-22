@@ -11,3 +11,5 @@ class UnknownParameter(Exception):
 class CyclicReference(Exception):
     pass
     
+class LoadingError(Exception):
+    pass

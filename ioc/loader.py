@@ -3,20 +3,24 @@
 import yaml
 
 from ioc.component import Definition, Reference, WeakReference
-import ioc.helper
+import ioc.helper, ioc.exceptions
 
 class YamlLoader(object):
     def support(self, file):
         return file[-3:] == 'yml'
 
     def load(self, file, container_builder):
-        data = yaml.load(open(file).read())
+
+        try:
+            data = yaml.load(open(file).read())
+        except yaml.scanner.ScannerError, e:
+            raise ioc.exceptions.LoadingError("file %s, \nerror: %s" % (file, e))
 
         for extension, config in data.iteritems():
             if extension in ['parameters', 'services']:
                 continue
 
-            container_builder.add_extension(extension, config)
+            container_builder.add_extension(extension, ioc.helper.Dict(config))
 
         if 'parameters' in data:
             for key, value in data['parameters'].iteritems():

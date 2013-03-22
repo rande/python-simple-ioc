@@ -6,6 +6,22 @@ import importlib, inspect
 from ioc.proxy import Proxy
 
 
+class Extension(object):
+    def load(self, config, container_builder):
+        pass
+
+    def post_load(self, container_builder, container):
+        pass
+
+    def pre_build(self, container_builder, container):
+        pass
+
+    def post_build(self, container):
+        pass
+
+    def start(self, container):
+        pass
+
 class Reference(object):
     def __init__(self, id):
         self.id = id
@@ -117,7 +133,7 @@ class ContainerBuilder(Container):
         if self.logger:
             self.logger.debug("Start building the container")
 
-        container.add("service_container", container)
+        extensions = []
 
         for name, config in self.extensions.iteritems():
             name = "%s.di.Extension" % name
@@ -128,11 +144,27 @@ class ContainerBuilder(Container):
             extension = self.get_class(Definition(name))()
             extension.load(config, self)
 
+            extensions.append(extension)
+
+        container.add("service_container", container)
+
+        for extension in extensions:
+            extension.post_load(self, container)
+
+        for extension in extensions:
+            extension.pre_build(self, container)
+
         for id, definition in self.services.iteritems():
             self.get_service(id, definition, container)
 
+        for extension in extensions:
+            extension.post_build(container)
+
         if self.logger:
             self.logger.debug("Building container is over!")
+
+        # start ....
+        # @todo: start a threaded pool
 
     def get_class(self, definition):
         m = importlib.import_module(definition.module)

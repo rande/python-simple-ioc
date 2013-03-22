@@ -25,3 +25,11 @@ class TestHelper(unittest.TestCase):
         self.assertEquals("arg", fake.arg2)
 
         self.assertTrue(container.get('foo').weak_reference == container.get('weak_reference'))
+
+    def test_dict(self):
+
+        d = ioc.helper.Dict({'key': 'value'})
+
+        self.assertEquals('value', d.get('key'))
+        self.assertEquals(None, d.get('key.fake'))
+        self.assertEquals('default', d.get('key.fake', 'default'))

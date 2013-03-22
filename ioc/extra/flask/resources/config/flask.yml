@@ -1,0 +1,11 @@
+services:
+    ioc.extra.flask.app:
+        class: flask.Flask
+        arguments: ['%ioc.extra.flask.app.name%']
+        kwarg:
+            - static_path:              '%ioc.extra.flask.app.static_path%'
+            - static_url_path:          '%ioc.extra.flask.app.static_url_path%'
+            - static_folder:            '%ioc.extra.flask.app.static_folder%'
+            - template_folder:          '%ioc.extra.flask.app.template_folder%'
+            - instance_path:            '%ioc.extra.flask.app.instance_path%'
+            - instance_relative_config: '%ioc.extra.flask.app.instance_relative_config%'
