@@ -152,4 +152,3 @@ class TestContainerBuilder(unittest.TestCase):
         with self.assertRaises(ioc.exceptions.CyclicReference):
             self.container.build_container(container)
 
-        

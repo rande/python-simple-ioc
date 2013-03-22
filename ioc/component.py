@@ -198,10 +198,7 @@ class ContainerBuilder(Container):
             raise ioc.exceptions.UnknownService(value.id)
 
         if isinstance(value, WeakReference) and not container.has(value.id):
-            service = Proxy(container, value.id)
-            container.add(value.id, service)
-
-            return service
+            return Proxy(container, value.id)
 
         if isinstance(value, Reference) and not container.has(value.id):
             return self.get_service(value.id, self.get(value.id), container)
