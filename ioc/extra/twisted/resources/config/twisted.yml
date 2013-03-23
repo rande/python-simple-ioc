@@ -1,0 +1,6 @@
+services:
+    ioc.extra.twisted.reactor:
+        class: twisted.internet.reactor
+
+    ioc.extra.twisted.reactor.thread_pool:
+        class: twisted.internet.reactor.getThreadPool
