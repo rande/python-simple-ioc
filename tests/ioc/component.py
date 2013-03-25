@@ -83,6 +83,25 @@ class TestParameterResolver(unittest.TestCase):
         # holder['baz'] = '%%%foo% %foo%%% %%foo%% %%%foo%%%'
         # self.assertEquals("%%bar bar%% %%foo%% %%bar%%", parameter_resolver.resolve('%baz%', holder))
 
+    def test_nested_parameters(self):
+        holder = ioc.component.ParameterHolder()
+        holder.set('bonjour', 'hello')
+        holder.set('le_monde', 'world %exclamation%')
+        holder.set('exclamation', '!')
+
+        parameter_resolver = ioc.component.ParameterResolver()
+
+        self.assertEquals("hello world !", parameter_resolver.resolve("%bonjour% %le_monde%", holder))
+
+    def test_nested_parameters_recursive(self):
+        holder = ioc.component.ParameterHolder()
+        holder.set('bonjour', 'hello %le_monde%')
+        holder.set('le_monde', '%bonjour% world')
+
+        parameter_resolver = ioc.component.ParameterResolver()
+
+        parameter_resolver.resolve("%bonjour% %le_monde%", holder)
+
 
 class TestContainer(unittest.TestCase):
     def setUp(self):

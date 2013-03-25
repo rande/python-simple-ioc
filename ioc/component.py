@@ -69,8 +69,9 @@ class ParameterResolver(object):
     def __init__(self, logger=None):
         self.re = re.compile("%%|%([^%\s]+)%")
         self.logger = logger
+        self.stack = []
 
-    def resolve(self, parameter, parameter_holder):
+    def _resolve(self, parameter, parameter_holder):
         if not type(parameter) == str:
             return parameter
 
@@ -82,22 +83,31 @@ class ParameterResolver(object):
             if self.logger:
                 self.logger.debug("Match parameter: %s" % parameter[1:-1])
 
-            return parameter_holder.get(parameter[1:-1])
+            return self.resolve(parameter_holder.get(parameter[1:-1]), parameter_holder)
 
         else:
             def replace(matchobj):
                 if matchobj.group(0) == '%%':
                     return '%'
 
-                return parameter_holder.get(matchobj.group(1))
+                return self.resolve(parameter_holder.get(matchobj.group(1)), parameter_holder)
 
             if self.logger:
                 self.logger.debug("Start resolving parameter: %s" % parameter)
 
-            parameter, num = re.subn(self.re, replace, parameter)
+            parameter, nums = re.subn(self.re, replace, parameter)
 
         return parameter
 
+    def resolve(self, parameter, parameter_holder):
+        if parameter in self.stack:
+            raise ioc.exceptions.RecursiveParameterResolutionError(" -> ".join(self.stack) + " -> " + parameter)
+
+        self.stack.append(parameter)
+        value = self._resolve(parameter, parameter_holder)
+        self.stack.pop()
+
+        return value
 
 class Container(object):
     def __init__(self):
