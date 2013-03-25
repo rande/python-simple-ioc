@@ -67,7 +67,6 @@ class TestParameterResolver(unittest.TestCase):
 
         self.assertEquals([4, 2], parameter_resolver.resolve("%array%", holder))
 
-
     def test_escaping(self):
         holder = ioc.component.ParameterHolder()
         holder.set('bonjour', 'hello')

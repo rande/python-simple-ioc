@@ -5,7 +5,15 @@ import yaml
 from ioc.component import Definition, Reference, WeakReference
 import ioc.helper, ioc.exceptions
 
-class YamlLoader(object):
+class Loader(object):
+    def fix_config(self, config):
+        for key, value in config.iteritems():
+            if isinstance(value, dict):
+                config[key] = self.fix_config(value)
+
+        return ioc.helper.Dict(config)
+
+class YamlLoader(Loader):
     def support(self, file):
         return file[-3:] == 'yml'
 
@@ -20,7 +28,10 @@ class YamlLoader(object):
             if extension in ['parameters', 'services']:
                 continue
 
-            container_builder.add_extension(extension, ioc.helper.Dict(config))
+            if config == None:
+                config = {}
+
+            container_builder.add_extension(extension, self.fix_config(config.copy()))
 
         if 'parameters' in data:
             for key, value in data['parameters'].iteritems():
