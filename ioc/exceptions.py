@@ -8,6 +8,9 @@ class UnknownService(Exception):
 class UnknownParameter(Exception):
     pass
 
+class RecursiveParameterResolutionError(Exception):
+    pass
+
 class CyclicReference(Exception):
     pass
     
