@@ -34,6 +34,19 @@ class Dict(object):
 
         return data
 
+    def get_dict(self, name, default={}):
+        value = self.get(name, default)
+        if not isinstance(value, Dict):
+            value = Dict(value)
+
+        return value
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __getitem__(self, key):
+        return self.data[key]     
+
 def build(files, logger=None):
 
     if not logger:
