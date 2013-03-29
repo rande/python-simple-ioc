@@ -81,7 +81,7 @@ class ParameterResolver(object):
 
         elif parameter[0:1] == '%' and parameter[-1] == '%' and parameter_holder.has(parameter[1:-1]):
             if self.logger:
-                self.logger.debug("Match parameter: %s" % parameter[1:-1])
+                self.logger.debug("   >> Match parameter: %s" % parameter[1:-1])
 
             return self.resolve(parameter_holder.get(parameter[1:-1]), parameter_holder)
 
@@ -93,7 +93,7 @@ class ParameterResolver(object):
                 return self.resolve(parameter_holder.get(matchobj.group(1)), parameter_holder)
 
             if self.logger:
-                self.logger.debug("Start resolving parameter: %s" % parameter)
+                self.logger.debug("   >> Start resolving parameter: %s" % parameter)
 
             parameter, nums = re.subn(self.re, replace, parameter)
 
@@ -205,12 +205,12 @@ class ContainerBuilder(Container):
             method, args, kwargs = call
 
             if self.logger:
-                self.logger.debug("Call method: %s on class: %s" % (method, klass))
+                self.logger.debug(" > Call method: %s on class: %s" % (method, instance))
 
             getattr(instance, method)(*self.set_services(args, container), **self.set_services(kwargs, container))
 
         if self.logger:
-            self.logger.debug("End creating instance %s" % klass)
+            self.logger.debug("End creating instance %s" % instance)
 
         return instance
 
