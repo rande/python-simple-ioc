@@ -38,7 +38,6 @@ class TestYamlLoader(unittest.TestCase):
         self.assertEquals([True], builder.get('fake').method_calls[1][1])
         self.assertEquals({'arg2': 'arg'}, builder.get('fake').method_calls[1][2])
 
-
     def test_reference(self):
 
         loader = ioc.loader.YamlLoader()
