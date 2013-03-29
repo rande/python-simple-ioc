@@ -48,10 +48,13 @@ class Dict(object):
     def __getitem__(self, key):
         return self.data[key]     
 
-def build(files, logger=None):
+def build(files, logger=None, parameters=None):
 
     if not logger:
         logger = logging.getLogger('ioc')
+
+    if not parameters:
+        parameters = {}
 
     container_builder = ioc.component.ContainerBuilder(logger=logger)
     
@@ -70,6 +73,9 @@ def build(files, logger=None):
             loader.load(file, container_builder)
 
     container = ioc.component.Container()
+
+    for name, value in parameters.iteritems():
+        container_builder.parameters.set(name, value)
 
     container_builder.build_container(container)
 
