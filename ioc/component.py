@@ -30,7 +30,7 @@ class WeakReference(Reference):
     pass
 
 class Definition(object):
-    def __init__(self, clazz=None, arguments={}, kwargs={}):
+    def __init__(self, clazz=None, arguments=None, kwargs=None):
         self.module = None
         self.function = None
 
@@ -42,28 +42,31 @@ class Definition(object):
                 self.module = ".".join(clazz.split(".")[0:-1])
                 self.function = clazz.split(".")[-1]
 
-        self.arguments = arguments
-        self.kwargs = kwargs
+        self.arguments = {} if arguments is None else arguments 
+        self.kwargs = {} if kwargs is None else kwargs 
         self.method_calls = []
 
 class ParameterHolder(object):
-    def __init__(self, parameters={}):
-        self.parameters = parameters
+    def __init__(self, parameters=None):
+        self._parameters = {} if parameters is None else parameters
 
     def set(self, key, value):
-        self.parameters[key] = value
+        self._parameters[key] = value
 
     def get(self, key):
-        if key in self.parameters:
-            return self.parameters[key]
+        if key in self._parameters:
+            return self._parameters[key]
 
         raise ioc.exceptions.UnknownParameter(key)
 
     def remove(self, key):
-        del self.parameters[key]
+        del self._parameters[key]
 
     def has(self, key):
-        return key in self.parameters
+        return key in self._parameters
+
+    def all(self):
+        return self._parameters
 
 class ParameterResolver(object):
     def __init__(self, logger=None):
@@ -164,6 +167,14 @@ class ContainerBuilder(Container):
         for extension in extensions:
             extension.pre_build(self, container)
 
+        # resolve parameters
+        for name, value in self.parameters.all().iteritems():
+            value = self.parameter_resolver.resolve(value, self.parameters)
+
+            self.parameters.set(name, value)
+            container.parameters.set(name, value)
+
+        # resolve service
         for id, definition in self.services.iteritems():
             self.get_service(id, definition, container)
 

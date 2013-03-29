@@ -15,19 +15,19 @@ class TestParameterHolder(unittest.TestCase):
     def test_init(self):
         parameter_holder = ioc.component.ParameterHolder()
 
-        self.assertEquals(0, len(parameter_holder.parameters))
+        self.assertEquals(0, len(parameter_holder.all()))
 
     def test_item(self):
         parameter_holder = ioc.component.ParameterHolder()
         
         parameter_holder.set('foo', 'bar')
 
-        self.assertEquals(1, len(parameter_holder.parameters))
+        self.assertEquals(1, len(parameter_holder.all()))
 
         self.assertEquals('bar', parameter_holder.get('foo'))
         parameter_holder.remove('foo')
 
-        self.assertEquals(0, len(parameter_holder.parameters))
+        self.assertEquals(0, len(parameter_holder.all()))
 
     def test_missing_parameter(self):
 
@@ -99,7 +99,8 @@ class TestParameterResolver(unittest.TestCase):
 
         parameter_resolver = ioc.component.ParameterResolver()
 
-        parameter_resolver.resolve("%bonjour% %le_monde%", holder)
+        with self.assertRaises(ioc.exceptions.RecursiveParameterResolutionError):
+            parameter_resolver.resolve("%bonjour% %le_monde%", holder)
 
 
 class TestContainer(unittest.TestCase):

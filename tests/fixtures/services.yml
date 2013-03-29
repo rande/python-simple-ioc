@@ -1,5 +1,6 @@
 parameters:
     foo.bar: argument 1
+    foo.foo: "the %foo.bar%"
 
 services:
     fake:

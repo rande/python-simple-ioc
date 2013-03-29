@@ -34,7 +34,8 @@ class Dict(object):
 
         return data
 
-    def get_dict(self, name, default={}):
+    def get_dict(self, name, default=None):
+        default = {} if default is None else default
         value = self.get(name, default)
         if not isinstance(value, Dict):
             value = Dict(value)
