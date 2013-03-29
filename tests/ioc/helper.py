@@ -11,7 +11,7 @@ class TestHelper(unittest.TestCase):
     def test_build(self):
         container = ioc.build([
             "%s/../fixtures/services.yml" % current_dir
-        ])
+        ], parameters={'inline': 'parameter'})
 
         self.assertEquals(4, len(container.services))
         self.assertEquals(container.get('foo').fake, container.get('fake'))
@@ -27,6 +27,7 @@ class TestHelper(unittest.TestCase):
         self.assertTrue(container.get('foo').weak_reference == container.get('weak_reference'))
 
         self.assertEquals('the argument 1', container.parameters.get('foo.foo'))
+        self.assertEquals('parameter', container.parameters.get('inline'))
 
     def test_dict(self):
 
