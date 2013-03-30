@@ -31,17 +31,7 @@ class WeakReference(Reference):
 
 class Definition(object):
     def __init__(self, clazz=None, arguments=None, kwargs=None):
-        self.module = None
-        self.function = None
-
-        if clazz:
-            if isinstance(clazz, list):
-                self.module = clazz[0]
-                self.function = clazz[1]
-            else:
-                self.module = ".".join(clazz.split(".")[0:-1])
-                self.function = clazz.split(".")[-1]
-
+        self.clazz = clazz
         self.arguments = {} if arguments is None else arguments 
         self.kwargs = {} if kwargs is None else kwargs 
         self.method_calls = []
@@ -188,13 +178,23 @@ class ContainerBuilder(Container):
         # @todo: start a threaded pool
 
     def get_class(self, definition):
-        m = importlib.import_module(definition.module)
 
-        f = definition.function.split(".")
-        clazz = getattr(m, f[0])
+        clazz = self.parameter_resolver.resolve(definition.clazz, self.parameters)
 
-        if len(f) == 2:
-            return getattr(clazz, f[1])
+        if isinstance(clazz, list):
+            module = clazz[0]
+            function = clazz[1]
+        else:
+            module = ".".join(clazz.split(".")[0:-1])
+            function = clazz.split(".")[-1]
+
+        module = importlib.import_module(module)
+
+        function = function.split(".")
+        clazz = getattr(module, function[0])
+
+        if len(function) == 2:
+            return getattr(clazz, function[1])
 
         return clazz
 
@@ -228,7 +228,7 @@ class ContainerBuilder(Container):
     def get_service(self, id, definition, container):
 
         if self.logger:
-            self.logger.debug("Get service: id=%s, module=%s, function=%s" % (id, definition.module, definition.function))
+            self.logger.debug("Get service: id=%s, class=%s" % (id, definition.clazz))
 
         if container.has(id):
             return container.get(id)
