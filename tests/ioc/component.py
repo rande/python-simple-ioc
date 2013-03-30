@@ -7,8 +7,7 @@ import tests.ioc.service
 class TestDefinition(unittest.TestCase):
     def test_init(self):
         definition = ioc.component.Definition()
-        self.assertIsNone(definition.module)
-        self.assertIsNone(definition.function)
+        self.assertIsNone(definition.clazz)
         self.assertEquals(0, len(definition.arguments))
 
 class TestParameterHolder(unittest.TestCase):
