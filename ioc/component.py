@@ -36,6 +36,13 @@ class Definition(object):
         self.kwargs = {} if kwargs is None else kwargs 
         self.method_calls = []
 
+    def add_call(self, method, arguments=None, kwargs=None):
+        self.method_calls.append([
+            method,
+            arguments or [],
+            kwargs or {}
+        ])
+
 class ParameterHolder(object):
     def __init__(self, parameters=None):
         self._parameters = {} if parameters is None else parameters

@@ -1,0 +1,5 @@
+services:
+    ioc.extra.redis:
+        class: ioc.extra.redis.Manager
+        kwarg:
+            - default: '%ioc.extra.redis.default_connection%'
