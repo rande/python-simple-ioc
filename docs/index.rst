@@ -13,6 +13,7 @@ Contents:
 
    install
    bootstraping
+   extension
 
 
 Indices and tables
