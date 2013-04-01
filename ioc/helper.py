@@ -35,13 +35,19 @@ class Dict(object):
         return data
 
     def get_dict(self, name, default=None):
-        default = {} if default is None else default
+        default = default or {}
         value = self.get(name, default)
         if not isinstance(value, Dict):
             value = Dict(value)
 
         return value
 
+    def get_int(self, name, default=None):
+        return int(self.get(name, default))
+
+    def all(self):
+        return self.data
+        
     def __iter__(self):
         return iter(self.data)
 
