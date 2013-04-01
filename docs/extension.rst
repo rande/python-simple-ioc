@@ -61,8 +61,8 @@ and to use it:
     __name__ == ’__main__’:
         app.run()
 
-Going furher
-------------
+Going further
+-------------
 
 The previous example is a bit overkill as Flask itself required a minimun amount of code to run. However the previous code allows to configure the default port which can be usefull for running different configurations.
 
