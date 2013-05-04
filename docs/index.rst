@@ -15,6 +15,7 @@ Contents:
    bootstraping
    extension
    tag
+   event_dispatcher
    extra
 
 Indices and tables

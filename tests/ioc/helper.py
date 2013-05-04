@@ -13,7 +13,7 @@ class TestHelper(unittest.TestCase):
             "%s/../fixtures/services.yml" % current_dir
         ], parameters={'inline': 'parameter'})
 
-        self.assertEquals(4, len(container.services))
+        self.assertEquals(5, len(container.services))
         self.assertEquals(container.get('foo').fake, container.get('fake'))
         self.assertEquals('argument 1', container.get('fake').mandatory)
 

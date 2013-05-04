@@ -60,15 +60,19 @@ def build(files, logger=None, parameters=None):
         logger = logging.getLogger('ioc')
 
     if not parameters:
-        parameters = {}
+        parameters = {
+            'ioc.debug': False
+        }
 
     container_builder = ioc.component.ContainerBuilder(logger=logger)
+    container_builder.add('event_dispatcher', ioc.component.Definition('ioc.event.Dispatcher'))
     
     loaders = [
         ioc.loader.YamlLoader()
     ]
 
     logger.debug("Loading files")
+
     for file in files:
         logger.debug("Search loader for file %s" % file)
         for loader in loaders:
@@ -76,6 +80,7 @@ def build(files, logger=None, parameters=None):
                 continue
 
             logger.debug("Found loader %s for file %s" % (loader, file))
+
             loader.load(file, container_builder)
 
     container = ioc.component.Container()

@@ -16,3 +16,6 @@ class CyclicReference(Exception):
     
 class LoadingError(Exception):
     pass
+
+class DuplicateServiceDefinition(Exception):
+    pass
