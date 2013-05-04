@@ -52,6 +52,9 @@ class YamlLoader(Loader):
                 if 'calls' not in meta:
                     meta['calls'] = []
 
+                if 'tags' not in meta:
+                    meta['tags'] = {}
+
                 definition = Definition(
                     clazz=meta['class'], 
                     arguments=self.set_references(meta['arguments']), 
@@ -72,6 +75,10 @@ class YamlLoader(Loader):
                     definition.method_calls.append(
                         (call[0], self.set_references(call[1]), self.set_references(call[2]))
                     )
+
+                for tag, options in meta['tags'].iteritems():
+                    for option in options:
+                        definition.add_tag(tag, option)
 
                 container_builder.add(id, definition)
 
