@@ -38,6 +38,9 @@ class TestYamlLoader(unittest.TestCase):
         self.assertEquals([True], builder.get('fake').method_calls[1][1])
         self.assertEquals({'arg2': 'arg'}, builder.get('fake').method_calls[1][2])
 
+        # test tags
+        self.assertEquals(['foo'], builder.get_ids_by_tag('jinja.filter'))
+
     def test_reference(self):
 
         loader = ioc.loader.YamlLoader()

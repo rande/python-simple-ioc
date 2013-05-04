@@ -14,6 +14,7 @@ Contents:
    install
    bootstraping
    extension
+   tag
    extra
 
 Indices and tables

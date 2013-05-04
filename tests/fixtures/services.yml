@@ -18,6 +18,9 @@ services:
         class: '%foo.class%'
         arguments: ["@fake", "#@weak_reference"]
         kargs: {}
+        tags:
+            jinja.filter:
+                - []
 
     weak_reference:
         class: tests.ioc.service.WeakReference
