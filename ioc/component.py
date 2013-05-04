@@ -32,9 +32,11 @@ class WeakReference(Reference):
 class Definition(object):
     def __init__(self, clazz=None, arguments=None, kwargs=None):
         self.clazz = clazz
-        self.arguments = {} if arguments is None else arguments 
-        self.kwargs = {} if kwargs is None else kwargs 
+        self.arguments = arguments or {} 
+        self.kwargs = kwargs or {}
         self.method_calls = []
+        self.property_calls = []
+        self.tags = {}
 
     def add_call(self, method, arguments=None, kwargs=None):
         self.method_calls.append([
@@ -42,6 +44,21 @@ class Definition(object):
             arguments or [],
             kwargs or {}
         ])
+
+    def add_tag(self, name, options=None):
+        if name not in self.tags:
+            self.tags[name] = []
+
+        self.tags[name].append(options or {})
+
+    def has_tag(self, name):
+        return name in self.tags
+
+    def get_tag(self, name):
+        if not self.has_tag(name):
+            return []
+
+        return self.tags[name]
 
 class ParameterHolder(object):
     def __init__(self, parameters=None):
@@ -139,6 +156,9 @@ class ContainerBuilder(Container):
     def add_extension(self, name, config):
         self.extensions[name] = config
 
+    def get_ids_by_tag(self, name):
+        return [id for id, definition in self.services.iteritems() if definition.has_tag(name)]
+
     def build_container(self, container):
         if self.logger:
             self.logger.debug("Start building the container")
@@ -225,8 +245,14 @@ class ContainerBuilder(Container):
             if self.logger:
                 self.logger.debug(" > Call method: %s on class: %s" % (method, instance))
 
-            getattr(instance, method)(*self.set_services(args, container), **self.set_services(kwargs, container))
+            attr = getattr(instance, method)
 
+            if not attr:
+                # handle property definition
+                setattr(instance, method, self.set_services(args, container)[0])
+            else:
+                attr(*self.set_services(args, container), **self.set_services(kwargs, container))
+            
         if self.logger:
             self.logger.debug("End creating instance %s" % instance)
 
