@@ -10,6 +10,15 @@ class TestDefinition(unittest.TestCase):
         self.assertIsNone(definition.clazz)
         self.assertEquals(0, len(definition.arguments))
 
+    def test_tag(self):
+        definition = ioc.component.Definition()
+        definition.add_tag('jinja.filter')
+
+        self.assertFalse(definition.has_tag('salut'))
+        self.assertTrue(definition.has_tag('jinja.filter'))
+
+        self.assertEquals([{}], definition.get_tag('jinja.filter'))
+
 class TestParameterHolder(unittest.TestCase):
     def test_init(self):
         parameter_holder = ioc.component.ParameterHolder()
@@ -170,3 +179,10 @@ class TestContainerBuilder(unittest.TestCase):
         with self.assertRaises(ioc.exceptions.CyclicReference):
             self.container.build_container(container)
 
+    def test_get_ids_by_tag(self):
+        definition = ioc.component.Definition('tests.ioc.service.Foo')
+        definition.add_tag('jinja.filter')
+        self.container.add('service.id.1', definition)
+
+        self.assertEquals([], self.container.get_ids_by_tag('non_existent_tag'))
+        self.assertEquals(['service.id.1'], self.container.get_ids_by_tag('jinja.filter'))
