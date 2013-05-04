@@ -9,3 +9,10 @@ services:
             - template_folder:          '%ioc.extra.flask.app.template_folder%'
             - instance_path:            '%ioc.extra.flask.app.instance_path%'
             - instance_relative_config: '%ioc.extra.flask.app.instance_relative_config%'
+        calls:
+            - [debug, ['%ioc.debug%']]
+
+    ioc.extra.flask.logger:
+        class: logging.getLogger
+        arguments:
+            - 'ioc.flask.app'
