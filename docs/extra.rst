@@ -112,3 +112,12 @@ Services available:
 .. _Redis-Py: https://github.com/andymccurdy/redis-py
 .. _Redis: http://redis.io/
 .. _Twisted: http://twistedmatrix.com/
+
+Event Dispatcher
+----------------
+
+The IoC package includes a small event dispatcher, you can include it by adding this yaml.
+
+.. code-block:: yaml
+
+    ioc.extra.event:

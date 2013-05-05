@@ -7,7 +7,7 @@ class Extension(ioc.component.Extension):
             'default': 'ioc.extra.redis.client.default' 
         }).all())
 
-    def post_build(self, container):
+    def post_build(self, container_builder, container):
         import redis_wrap
 
         for name, id in container.parameters.get('ioc.extra.redis_wrap.clients').iteritems():
