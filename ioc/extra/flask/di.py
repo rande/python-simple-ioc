@@ -67,11 +67,35 @@ class Extension(ioc.component.Extension):
         for id, kwargs in config.get_dict('blueprints', {}).all().iteritems():
             definition.add_call('register_blueprint', [ioc.component.Reference(id)], kwargs.all())
 
-    def post_build(self, container):
+    def post_build(self, container_builder, container):
+
         if container.has('jinja.env'):
             raise ioc.exceptions.DuplicateServiceDefinition()
 
-        container.set('jinja.env', container.get('ioc.extra.flask.app').jinja_env)
-        container.set('jinja.loader', container.get('ioc.extra.flask.app').jinja_loader)
+        container.add('jinja.env', container.get('ioc.extra.flask.app').jinja_env)
+        container.add('jinja.loader', container.get('ioc.extra.flask.app').jinja_loader)
 
+        # Attach jinja helper to the dedicated instance
+        # TODO: create a proper jinja extra and overwrite the default Flask App to use this
+        #       a clean jinja instance
+        for id in container_builder.get_ids_by_tag('jinja.filter'):
+            definition = container_builder.get(id)
+            for option in definition.get_tag('jinja.filter'):
+                if 'name' not in option:
+                    break
 
+                if 'method' not in option:
+                    break                
+
+                container.get('jinja.env').filters[option['name']] = getattr(container.get(id), option['method'])
+
+        for id in container_builder.get_ids_by_tag('jinja.global'):
+            definition = container_builder.get(id)
+            for option in definition.get_tag('jinja.global'):
+                if 'name' not in option:
+                    break
+
+                if 'method' not in option:
+                    break                
+
+                container.get('jinja.env').globals[option['name']] = getattr(container.get(id), option['method'])

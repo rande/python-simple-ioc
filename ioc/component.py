@@ -16,7 +16,7 @@ class Extension(object):
     def pre_build(self, container_builder, container):
         pass
 
-    def post_build(self, container):
+    def post_build(self, container_builder, container):
         pass
 
     def start(self, container):
@@ -196,7 +196,7 @@ class ContainerBuilder(Container):
             self.get_service(id, definition, container)
 
         for extension in extensions:
-            extension.post_build(container)
+            extension.post_build(self, container)
 
         if self.logger:
             self.logger.debug("Building container is over!")

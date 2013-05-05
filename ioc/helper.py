@@ -65,8 +65,7 @@ def build(files, logger=None, parameters=None):
         }
 
     container_builder = ioc.component.ContainerBuilder(logger=logger)
-    container_builder.add('event_dispatcher', ioc.component.Definition('ioc.event.Dispatcher'))
-    
+        
     loaders = [
         ioc.loader.YamlLoader()
     ]
