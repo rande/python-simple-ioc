@@ -165,6 +165,8 @@ class ContainerBuilder(Container):
 
         extensions = []
 
+        container.add("service_container", container)
+
         for name, config in self.extensions.iteritems():
             name = "%s.di.Extension" % name
 
@@ -175,8 +177,6 @@ class ContainerBuilder(Container):
             extension.load(config, self)
 
             extensions.append(extension)
-
-        container.add("service_container", container)
 
         for extension in extensions:
             extension.post_load(self, container)
@@ -197,6 +197,12 @@ class ContainerBuilder(Container):
 
         for extension in extensions:
             extension.post_build(self, container)
+
+        if container.has('ioc.extra.event_dispatcher'):
+            container.get('ioc.extra.event_dispatcher').dispatch('ioc.container.built', {
+                'container': container,
+                'container_builder': self
+            })
 
         if self.logger:
             self.logger.debug("Building container is over!")
@@ -280,6 +286,10 @@ class ContainerBuilder(Container):
         return instance
 
     def set_service(self, value, container):
+
+        if isinstance(value, (Reference, WeakReference)) and container.has(value.id):
+            return container.get(value.id)
+
         if isinstance(value, (Reference, WeakReference)) and not self.has(value.id):
             raise ioc.exceptions.UnknownService(value.id)
 

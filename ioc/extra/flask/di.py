@@ -17,6 +17,7 @@ class Extension(ioc.component.Extension):
         container_builder.parameters.set('ioc.extra.flask.app.instance_path', app.get('instance_path', 'templates'))
         container_builder.parameters.set('ioc.extra.flask.app.template_folder', app.get('template_folder', ''))
         container_builder.parameters.set('ioc.extra.flask.app.port', app.get('port', 8080))
+        container_builder.parameters.set('ioc.extra.flask.app.instance_relative_config', app.get('instance_relative_config', False))
 
         self.configure_app_config(config, container_builder)
         self.configure_blueprint(config, container_builder)
@@ -57,45 +58,41 @@ class Extension(ioc.component.Extension):
             container_builder.parameters.set('ioc.extra.flask.app.%s' % name, c.get(name, value))
             defaults[name] = value
 
-        container_builder.parameters.set('ioc.extra.flask.app.instance_relative_config', defaults)
-
+        container_builder.parameters.set('ioc.extra.flask.app.config', defaults)
 
     def configure_blueprint(self, config, container_builder):
-
         definition = container_builder.get('ioc.extra.flask.app')
 
         for id, kwargs in config.get_dict('blueprints', {}).all().iteritems():
             definition.add_call('register_blueprint', [ioc.component.Reference(id)], kwargs.all())
 
     def post_build(self, container_builder, container):
+        """
+        This method make sure the flask configuration is fine, and 
+        check the if ioc.extra.jinja2 service is available. If so, the 
+        flask instance will use this service, by keeping the flask template 
+        loader and the one registered at the jinja2
+        """
+        flask = container.get('ioc.extra.flask.app')
 
-        if container.has('jinja.env'):
-            raise ioc.exceptions.DuplicateServiceDefinition()
+        flask.config.update(container_builder.parameters.get('ioc.extra.flask.app.config'))
 
-        container.add('jinja.env', container.get('ioc.extra.flask.app').jinja_env)
-        container.add('jinja.loader', container.get('ioc.extra.flask.app').jinja_loader)
+        if container.has('ioc.extra.jinja2'):
+            # This must be an instance of jinja.ChoiceLoader
+            # This code replace the flask specific jinja configuration to use
+            # the one provided by the ioc.extra.jinja2 code
 
-        # Attach jinja helper to the dedicated instance
-        # TODO: create a proper jinja extra and overwrite the default Flask App to use this
-        #       a clean jinja instance
-        for id in container_builder.get_ids_by_tag('jinja.filter'):
-            definition = container_builder.get(id)
-            for option in definition.get_tag('jinja.filter'):
-                if 'name' not in option:
-                    break
+            from flask.helpers import url_for, get_flashed_messages, _tojson_filter
 
-                if 'method' not in option:
-                    break                
+            jinja2 = container.get('ioc.extra.jinja2')
 
-                container.get('jinja.env').filters[option['name']] = getattr(container.get(id), option['method'])
+            jinja2.loader.loaders.append(flask.create_global_jinja_loader())
+            jinja2.globals.update(
+                url_for=url_for,
+                get_flashed_messages=get_flashed_messages
+            )
+            jinja2.filters['tojson'] = _tojson_filter
 
-        for id in container_builder.get_ids_by_tag('jinja.global'):
-            definition = container_builder.get(id)
-            for option in definition.get_tag('jinja.global'):
-                if 'name' not in option:
-                    break
+            flask.jinja_env = jinja2
 
-                if 'method' not in option:
-                    break                
 
-                container.get('jinja.env').globals[option['name']] = getattr(container.get(id), option['method'])

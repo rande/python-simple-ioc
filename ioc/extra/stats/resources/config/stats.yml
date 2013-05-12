@@ -1,0 +1,15 @@
+services:
+    ioc.extra.stats.views.index:
+        class: ioc.extra.stats.views.IndexView
+        arguments: 
+            - '@service_container'
+
+    ioc.extra.stats.views.parameters:
+        class: ioc.extra.stats.views.ParametersView
+        arguments: 
+            - '@service_container'        
+
+    ioc.extra.stats.views.services:
+        class: ioc.extra.stats.views.ServicesView
+        arguments: 
+            - '@service_container'

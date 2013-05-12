@@ -108,11 +108,6 @@ Services available:
 - ioc.extra.twisted.reactor.thread_pool: the reactor thread pool
 
 
-.. _Flask: http://flask.pocoo.org/
-.. _Redis-Py: https://github.com/andymccurdy/redis-py
-.. _Redis: http://redis.io/
-.. _Twisted: http://twistedmatrix.com/
-
 Event Dispatcher
 ----------------
 
@@ -121,3 +116,23 @@ The IoC package includes a small event dispatcher, you can include it by adding 
 .. code-block:: yaml
 
     ioc.extra.event:
+
+Mailer
+------
+
+.. code-block:: yaml
+
+    ioc.extra.mailer:
+        host: localhost
+        port:
+        use_tls: false
+        user: 
+        password: 
+        use_ssl: false
+
+
+.. _Flask: http://flask.pocoo.org/
+.. _Redis-Py: https://github.com/andymccurdy/redis-py
+.. _Redis: http://redis.io/
+.. _Twisted: http://twistedmatrix.com/
+.. _Mailer: https://pypi.python.org/pypi/mailer
