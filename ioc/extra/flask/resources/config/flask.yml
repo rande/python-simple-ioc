@@ -16,3 +16,12 @@ services:
         class: logging.getLogger
         arguments:
             - 'ioc.flask.app'
+
+
+    element.command.flask.server:
+        class: ioc.extra.flask.command.StartCommand
+        arguments: 
+            - '@ioc.extra.flask.app'
+        tags:
+            command:
+                - { name: 'flask:start' }
