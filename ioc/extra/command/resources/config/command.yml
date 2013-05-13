@@ -1,0 +1,11 @@
+services:
+    ioc.extra.command.manager:
+        class: ioc.extra.command.CommandManager
+
+    ioc.extra.command.help:
+        class: ioc.extra.command.HelpCommand
+        arguments:
+            - '@ioc.extra.command.manager'
+        tags:
+            command:
+                - { name: 'help' }
