@@ -13,4 +13,15 @@ class StartCommand(Command):
     def execute(self, args, output):
         output.write("Starting flask...\n")
 
-        self.flask.run(host=args.host, port=args.port, debug=args.debug)
+        options = {
+            'host': args.host,
+            'port': args.port,
+        }
+
+        ## flask autoreload cannot read from arguments line
+        if args.debug:
+            options['debug'] = True
+            options['use_reloader'] = False
+            options['use_debugger'] = False
+
+        self.flask.run(**options)

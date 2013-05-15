@@ -18,7 +18,7 @@ class CommandManager(object):
 
         # default share arguments
         parser.add_argument('--verbose', '-v', action='count', help="verbose level")
-        parser.add_argument('--debug', '-d', help="debug mode")
+        parser.add_argument('--debug', '-d', help="debug mode", action='store_true')
         parser.add_argument('--env', '-e', help="Define the environement")
 
         command.initialize(parser)
@@ -26,7 +26,6 @@ class CommandManager(object):
         self.commands[name] = (parser, command)
 
     def execute(self, argv, stdout):
-
         argv.pop(0) # remove the script name
 
         if len(argv) == 0: # no argument
@@ -45,7 +44,7 @@ class CommandManager(object):
         r = command.execute(arguments, stdout)
 
         if r == None:
-            r = 0
+           r = 0
 
         return r
 
