@@ -3,6 +3,7 @@ include AUTHORS
 include LICENSE
 include MANIFEST.in
 include tests.py
+include setup.py
 recursive-include ioc *
 recursive-include docs *
 recursive-include tests *
