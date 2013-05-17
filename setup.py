@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="ioc",
@@ -10,7 +10,9 @@ setup(
     author="Thomas Rabaix",
     author_email="thomas.rabaix@gmail.com",
     url="https://github.com/rande/python-simple-ioc",
-    py_modules=["ioc"],
-    packages = ['ioc'],
+    include_package_data = True,
+    # py_modules=["ioc"],
+    packages = find_packages(),
     install_requires=["pyyaml"],
+    platforms='any',
 )
