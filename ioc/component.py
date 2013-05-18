@@ -181,15 +181,16 @@ class ContainerBuilder(Container):
         for extension in extensions:
             extension.post_load(self, container)
 
-        for extension in extensions:
-            extension.pre_build(self, container)
-
         # resolve parameters
         for name, value in self.parameters.all().iteritems():
             value = self.parameter_resolver.resolve(value, self.parameters)
 
             self.parameters.set(name, value)
+
             container.parameters.set(name, value)
+
+        for extension in extensions:
+            extension.pre_build(self, container)
 
         # resolve service
         for id, definition in self.services.iteritems():
