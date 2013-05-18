@@ -12,6 +12,8 @@ class Extension(ioc.component.Extension):
         app = config.get_dict('app', {})
 
         container_builder.parameters.set('ioc.extra.flask.app.name', app.get('name', ''))
+        
+        container_builder.parameters.set('ioc.extra.flask.app.static_folder', app.get('static_folder', 'static'))
         container_builder.parameters.set('ioc.extra.flask.app.static_path', app.get('static_path', ''))
         container_builder.parameters.set('ioc.extra.flask.app.static_url_path', app.get('static_url_path', 'static'))
         container_builder.parameters.set('ioc.extra.flask.app.instance_path', app.get('instance_path', 'templates'))
@@ -21,7 +23,6 @@ class Extension(ioc.component.Extension):
 
         self.configure_app_config(config, container_builder)
         self.configure_blueprint(config, container_builder)
-
 
     def configure_app_config(self, config, container_builder):
 
