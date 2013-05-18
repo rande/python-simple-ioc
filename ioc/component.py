@@ -208,8 +208,6 @@ class ContainerBuilder(Container):
         if self.logger:
             self.logger.debug("Building container is over!")
 
-        # start ....
-        # @todo: start a threaded pool
 
     def get_class(self, definition):
 
