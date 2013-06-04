@@ -75,6 +75,14 @@ class TestParameterResolver(unittest.TestCase):
 
         self.assertEquals([4, 2], parameter_resolver.resolve("%array%", holder))
 
+    def test_replace_tuple(self):
+        holder = ioc.component.ParameterHolder()
+        holder.set('tuple', "salut")
+
+        parameter_resolver = ioc.component.ParameterResolver()
+
+        self.assertEquals(("salut", 2), parameter_resolver.resolve(("%tuple%", 2), holder))
+
     def test_escaping(self):
         holder = ioc.component.ParameterHolder()
         holder.set('bonjour', 'hello')
