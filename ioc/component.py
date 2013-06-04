@@ -89,12 +89,21 @@ class ParameterResolver(object):
         self.stack = []
 
     def _resolve(self, parameter, parameter_holder):
-        if not type(parameter) == str:
-            return parameter
+        if isinstance(parameter, (tuple)):
+            parameter = list(parameter)
+            for key in ioc.helper.get_keys(parameter):
+                parameter[key] = self.resolve(parameter[key], parameter_holder)
+
+            return tuple(parameter)
 
         if ioc.helper.is_iterable(parameter):
             for key in ioc.helper.get_keys(parameter):
                 parameter[key] = self.resolve(parameter[key], parameter_holder)
+
+            return parameter
+
+        elif not type(parameter) == str:
+            return parameter
 
         elif parameter[0:1] == '%' and parameter[-1] == '%' and parameter_holder.has(parameter[1:-1]):
             if self.logger:
