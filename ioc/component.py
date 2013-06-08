@@ -332,6 +332,9 @@ class ContainerBuilder(Container):
         if ioc.helper.is_iterable(value):
             return self.set_services(value, container)
 
+        if isinstance(value, (tuple)):
+            return tuple(self.set_services(list(value), container))
+
         return self.parameter_resolver.resolve(value, self.parameters)
 
     def set_services(self, arguments, container):
