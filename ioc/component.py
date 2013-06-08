@@ -116,8 +116,8 @@ class ParameterResolver(object):
             return parameter
 
         if parameter[0:1] == '%' and parameter[-1] == '%' and parameter_holder.has(parameter[1:-1]):
-            if self.logger:
-                self.logger.debug("   >> Match parameter: %s" % parameter[1:-1])
+            # if self.logger:
+            #     self.logger.debug("   >> Match parameter: %s" % parameter[1:-1])
 
             return self.resolve(parameter_holder.get(parameter[1:-1]), parameter_holder)
 
@@ -128,8 +128,8 @@ class ParameterResolver(object):
 
             return self.resolve(parameter_holder.get(matchobj.group(1)), parameter_holder)
 
-        if self.logger:
-            self.logger.debug("   >> Start resolving parameter: %s" % parameter)
+        # if self.logger:
+        #     self.logger.debug("   >> Start resolving parameter: %s" % parameter)
 
         parameter, nums = re.subn(self.re, replace, parameter)
 
@@ -206,20 +206,15 @@ class ContainerBuilder(Container):
         for extension in extensions:
             extension.pre_build(self, container)
 
-        # resolve service
+        # resolve services
         for id, definition in self.services.iteritems():
             self.get_service(id, definition, container)
 
         for extension in extensions:
             extension.post_build(self, container)
 
-        # print self.parameters.all()
-
         if self.logger:
             self.logger.debug("Building container is over!")
-
-        # # resolve parameters
-        if self.logger:
             self.logger.debug("Starting resolving all parameters!")
 
         for name, value in self.parameters.all().iteritems():
@@ -313,7 +308,6 @@ class ContainerBuilder(Container):
         return instance
 
     def set_service(self, value, container):
-
         if isinstance(value, (Reference, WeakReference)) and container.has(value.id):
             return container.get(value.id)
 
