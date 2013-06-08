@@ -19,3 +19,6 @@ class LoadingError(Exception):
 
 class DuplicateServiceDefinition(Exception):
     pass
+
+class ParameterHolderIsFrozen(Exception):
+    pass

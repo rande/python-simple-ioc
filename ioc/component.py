@@ -2,7 +2,7 @@
 
 import ioc.exceptions, ioc.helper
 import re, exceptions
-import importlib, inspect
+import importlib, inspect, copy
 from ioc.proxy import Proxy
 
 
@@ -62,9 +62,13 @@ class Definition(object):
 
 class ParameterHolder(object):
     def __init__(self, parameters=None):
-        self._parameters = {} if parameters is None else parameters
+        self._parameters = parameters or {}
+        self._frozen = False
 
     def set(self, key, value):
+        if self._frozen:
+            raise ioc.exceptions.ParameterHolderIsFrozen(key)
+
         self._parameters[key] = value
 
     def get(self, key):
@@ -81,6 +85,12 @@ class ParameterHolder(object):
 
     def all(self):
         return self._parameters
+
+    def freeze(self):
+        self._frozen = True
+
+    def is_frozen(self):
+        return self._frozen == True
 
 class ParameterResolver(object):
     def __init__(self, logger=None):
@@ -102,32 +112,35 @@ class ParameterResolver(object):
 
             return parameter
 
-        elif not type(parameter) == str:
+        if not type(parameter) == str:
             return parameter
 
-        elif parameter[0:1] == '%' and parameter[-1] == '%' and parameter_holder.has(parameter[1:-1]):
+        if parameter[0:1] == '%' and parameter[-1] == '%' and parameter_holder.has(parameter[1:-1]):
             if self.logger:
                 self.logger.debug("   >> Match parameter: %s" % parameter[1:-1])
 
             return self.resolve(parameter_holder.get(parameter[1:-1]), parameter_holder)
 
-        else:
-            def replace(matchobj):
-                if matchobj.group(0) == '%%':
-                    return '%'
 
-                return self.resolve(parameter_holder.get(matchobj.group(1)), parameter_holder)
+        def replace(matchobj):
+            if matchobj.group(0) == '%%':
+                return '%'
 
-            if self.logger:
-                self.logger.debug("   >> Start resolving parameter: %s" % parameter)
+            return self.resolve(parameter_holder.get(matchobj.group(1)), parameter_holder)
 
-            parameter, nums = re.subn(self.re, replace, parameter)
+        if self.logger:
+            self.logger.debug("   >> Start resolving parameter: %s" % parameter)
 
+        parameter, nums = re.subn(self.re, replace, parameter)
+
+        # print parameter
         return parameter
 
     def resolve(self, parameter, parameter_holder):
         if parameter in self.stack:
             raise ioc.exceptions.RecursiveParameterResolutionError(" -> ".join(self.stack) + " -> " + parameter)
+
+        parameter = copy.deepcopy(parameter)
 
         self.stack.append(parameter)
         value = self._resolve(parameter, parameter_holder)
@@ -190,14 +203,6 @@ class ContainerBuilder(Container):
         for extension in extensions:
             extension.post_load(self, container)
 
-        # resolve parameters
-        for name, value in self.parameters.all().iteritems():
-            value = self.parameter_resolver.resolve(value, self.parameters)
-
-            self.parameters.set(name, value)
-
-            container.parameters.set(name, value)
-
         for extension in extensions:
             extension.pre_build(self, container)
 
@@ -208,18 +213,32 @@ class ContainerBuilder(Container):
         for extension in extensions:
             extension.post_build(self, container)
 
+        # print self.parameters.all()
+
+        if self.logger:
+            self.logger.debug("Building container is over!")
+
+        # # resolve parameters
+        if self.logger:
+            self.logger.debug("Starting resolving all parameters!")
+
+        for name, value in self.parameters.all().iteritems():
+            container.parameters.set(
+                name, 
+                self.parameter_resolver.resolve(value, self.parameters)
+            )
+
+        if self.logger:
+            self.logger.debug("End resolving all parameters!")
+
         if container.has('ioc.extra.event_dispatcher'):
             container.get('ioc.extra.event_dispatcher').dispatch('ioc.container.built', {
                 'container': container,
                 'container_builder': self
             })
 
-        if self.logger:
-            self.logger.debug("Building container is over!")
-
 
     def get_class(self, definition):
-
         clazz = self.parameter_resolver.resolve(definition.clazz, self.parameters)
 
         if isinstance(clazz, list):
