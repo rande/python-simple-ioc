@@ -2,9 +2,8 @@
 
 import ioc.exceptions, ioc.helper
 import re, exceptions
-import importlib, inspect, copy
+import importlib, inspect
 from ioc.proxy import Proxy
-
 
 class Extension(object):
     def load(self, config, container_builder):
@@ -140,7 +139,7 @@ class ParameterResolver(object):
         if parameter in self.stack:
             raise ioc.exceptions.RecursiveParameterResolutionError(" -> ".join(self.stack) + " -> " + parameter)
 
-        parameter = copy.deepcopy(parameter)
+        parameter = ioc.helper.deepcopy(parameter)
 
         self.stack.append(parameter)
         value = self._resolve(parameter, parameter_holder)
