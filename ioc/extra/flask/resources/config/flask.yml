@@ -1,6 +1,6 @@
 services:
     ioc.extra.flask.app:
-        class: flask.Flask
+        class: flask.app.Flask
         arguments: ['%ioc.extra.flask.app.name%']
         kwargs:
             static_path:              '%ioc.extra.flask.app.static_path%'

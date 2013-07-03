@@ -74,25 +74,26 @@ class Extension(ioc.component.Extension):
         flask instance will use this service, by keeping the flask template 
         loader and the one registered at the jinja2
         """
-        flask = container.get('ioc.extra.flask.app')
+        app = container.get('ioc.extra.flask.app')
 
-        flask.config.update(container_builder.parameters.get('ioc.extra.flask.app.config'))
+        app.config.update(container_builder.parameters.get('ioc.extra.flask.app.config'))
 
         if container.has('ioc.extra.jinja2'):
             # This must be an instance of jinja.ChoiceLoader
             # This code replace the flask specific jinja configuration to use
             # the one provided by the ioc.extra.jinja2 code
 
-            from flask.helpers import url_for, get_flashed_messages, _tojson_filter
+            from flask.helpers import url_for, get_flashed_messages
+            import flask.json
 
             jinja2 = container.get('ioc.extra.jinja2')
 
-            jinja2.loader.loaders.append(flask.create_global_jinja_loader())
+            jinja2.loader.loaders.append(app.create_global_jinja_loader())
             jinja2.globals.update(
                 url_for=url_for,
                 get_flashed_messages=get_flashed_messages
             )
-            jinja2.filters['tojson'] = _tojson_filter
+            jinja2.filters['tojson'] = flask.json.tojson_filter
 
             flask.jinja_env = jinja2
 
