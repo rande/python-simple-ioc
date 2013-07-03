@@ -95,6 +95,6 @@ class Extension(ioc.component.Extension):
             )
             jinja2.filters['tojson'] = flask.json.tojson_filter
 
-            flask.jinja_env = jinja2
+            app.jinja_env = jinja2
 
 
