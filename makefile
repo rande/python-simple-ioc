@@ -4,4 +4,4 @@ register:
 	python setup.py register 
 
 upload:
-	python setup.py sdist bdist upload
+	python setup.py sdist upload

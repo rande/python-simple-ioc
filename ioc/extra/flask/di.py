@@ -47,7 +47,9 @@ class Extension(ioc.component.Extension):
             'TRAP_BAD_REQUEST_ERRORS':       False,
             'TRAP_HTTP_EXCEPTIONS':          False,
             'PREFERRED_URL_SCHEME':          'http',
-            'JSON_AS_ASCII':                 True
+            'JSON_AS_ASCII':                 True,
+            'JSON_SORT_KEYS':                True,
+            'JSONIFY_PRETTYPRINT_REGULAR':   True,
         }
 
         c = config.get_dict('config', {})
@@ -82,19 +84,16 @@ class Extension(ioc.component.Extension):
             # This must be an instance of jinja.ChoiceLoader
             # This code replace the flask specific jinja configuration to use
             # the one provided by the ioc.extra.jinja2 code
-
-            from flask.helpers import url_for, get_flashed_messages
-            import flask.json
-
             jinja2 = container.get('ioc.extra.jinja2')
 
             jinja2.loader.loaders.append(app.create_global_jinja_loader())
-            jinja2.globals.update(
-                url_for=url_for,
-                get_flashed_messages=get_flashed_messages
-            )
-            jinja2.filters['tojson'] = flask.json.tojson_filter
+
+            for name, value in app.jinja_env.globals.iteritems():
+                if name not in jinja2.globals:
+                    jinja2.globals[name] = value                
+
+            for name, value in app.jinja_env.filters.iteritems():
+                if name not in jinja2.filters:
+                    jinja2.filters[name] = value                
 
             app.jinja_env = jinja2
-
-
