@@ -45,10 +45,10 @@ class Extension(ioc.component.Extension):
 
                 jinja.filters[option['name']] = getattr(container.get(id), option['method'])
 
-
         for id in container_builder.get_ids_by_tag('jinja2.global'):
             definition = container_builder.get(id)
             for option in definition.get_tag('jinja2.global'):
+
                 if 'name' not in option:
                     break
 
