@@ -185,8 +185,8 @@ class ContainerBuilder(Container):
             self.logger.debug("Start building the container")
 
         extensions = []
-
         container.add("service_container", container)
+        self.parameters.set('ioc.extensions', self.extensions.keys())
 
         for name, config in self.extensions.iteritems():
             name = "%s.di.Extension" % name

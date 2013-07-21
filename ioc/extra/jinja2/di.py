@@ -16,8 +16,8 @@ class Extension(ioc.component.Extension):
         mapping = {}
         for name, config in container_builder.extensions.iteritems():
             mapping[name] = jinja2.FileSystemLoader([
-                "%s/resources/template/%s" % (container_builder.parameters.get('project.root_folder'), name),
-                "%s/resources/template" % os.path.dirname(importlib.import_module(name).__file__),
+                "%s/resources/%s/templates" % (container_builder.parameters.get('project.root_folder'), name),
+                "%s/resources/templates" % os.path.dirname(importlib.import_module(name).__file__),
             ])
 
         container_builder.parameters.set("ioc.extra.jinja2.loader_mapping", mapping)

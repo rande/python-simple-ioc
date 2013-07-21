@@ -4,8 +4,6 @@
 
     This code is based on the jinja2.loaders module
 """
-import os
-import sys
 from os import path
 
 class ResourceNotFound(Exception):
@@ -73,12 +71,9 @@ class PackageLocator(BaseLocator):
     """
 
     def __init__(self, package_name, package_path='resources'):
-        from pkg_resources import DefaultProvider, ResourceManager, \
-                                  get_provider
-        provider = get_provider(package_name)
+        from pkg_resources import ResourceManager, get_provider
         self.manager = ResourceManager()
-        self.filesystem_bound = isinstance(provider, DefaultProvider)
-        self.provider = provider
+        self.provider = get_provider(package_name)
         self.package_path = package_path
 
     def locate(self, resource):
