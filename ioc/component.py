@@ -252,7 +252,9 @@ class ContainerBuilder(Container):
 
         return clazz
 
-    def get_instance(self, klass, definition, container):
+    def get_instance(self, definition, container):
+
+        klass = self.get_class(definition)
 
         if self.logger:
             self.logger.debug("Create instance for %s" % klass)
@@ -300,7 +302,7 @@ class ContainerBuilder(Container):
             raise ioc.exceptions.CyclicReference(" -> ".join(self.stack) + " -> " + id)
 
         self.stack.append(id)
-        instance = self.get_instance(self.get_class(definition), definition, container)
+        instance = self.get_instance(definition, container)
         container.add(id, instance)
         self.stack.pop()
 
@@ -321,6 +323,9 @@ class ContainerBuilder(Container):
 
         if isinstance(value, Reference) and container.has(value.id):
             return container.get(value.id)
+
+        if isinstance(value, Definition):
+            return self.get_instance(value, container)
 
         if ioc.helper.is_iterable(value):
             return self.set_services(value, container)

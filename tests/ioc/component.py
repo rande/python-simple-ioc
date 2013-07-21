@@ -156,8 +156,7 @@ class TestContainerBuilder(unittest.TestCase):
         definition = ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'})
         container = ioc.component.Container()
 
-        c = self.container.get_class(definition)
-        i = self.container.get_instance(c, definition, container)
+        i = self.container.get_instance(definition, container)
 
         self.assertIs(type(i), tests.ioc.service.Fake)
         self.assertEquals(True, i.mandatory)
@@ -194,3 +193,21 @@ class TestContainerBuilder(unittest.TestCase):
 
         self.assertEquals([], self.container.get_ids_by_tag('non_existent_tag'))
         self.assertEquals(['service.id.1'], self.container.get_ids_by_tag('jinja.filter'))
+
+    def test_definition_with_inner_definition(self):
+
+        definition = ioc.component.Definition('tests.ioc.service.Fake', arguments=[
+            ioc.component.Definition('tests.ioc.service.Fake', arguments=[
+                ioc.component.Definition('tests.ioc.service.Fake', arguments=[1])
+            ])
+        ])
+
+        self.container.add('foo', definition)
+
+        container = ioc.component.Container()
+        self.container.build_container(container)
+
+        self.assertIsInstance(container.get('foo'), tests.ioc.service.Fake)
+        self.assertIsInstance(container.get('foo').mandatory, tests.ioc.service.Fake)
+        self.assertIsInstance(container.get('foo').mandatory.mandatory, tests.ioc.service.Fake)
+        
