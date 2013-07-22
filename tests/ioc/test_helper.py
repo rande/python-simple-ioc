@@ -2,7 +2,7 @@
 
 import ioc
 import os
-import unittest
+import unittest2 as unittest
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 

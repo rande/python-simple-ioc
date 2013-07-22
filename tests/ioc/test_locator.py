@@ -1,6 +1,6 @@
 # vim: set fileencoding=utf-8 :
 
-import unittest
+import unittest2 as unittest
 import ioc.locator
 import exceptions, os
 

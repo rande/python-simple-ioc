@@ -1,8 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
 import ioc.proxy, ioc.component
-import unittest 
-
+import unittest2 as unittest
 
 class FakeService(object):
     p = 42
