@@ -6,4 +6,4 @@ python:
 #install:
 
 # command to run tests
-script: python tests.py
+script: python -m unittest discover

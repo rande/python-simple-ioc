@@ -6,7 +6,7 @@ import unittest
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
-class TestYamlLoader(unittest.TestCase):
+class YamlLoaderTest(unittest.TestCase):
 
     def test_support(self):
         loader = ioc.loader.YamlLoader()

@@ -6,7 +6,7 @@ import unittest
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
-class TestHelper(unittest.TestCase):
+class HelperTest(unittest.TestCase):
 
     def test_build(self):
         container = ioc.build([

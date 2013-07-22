@@ -4,7 +4,7 @@ import unittest
 import ioc.event
 import exceptions
 
-class TestEvent(unittest.TestCase):
+class EventTest(unittest.TestCase):
     def test_init(self):
         event = ioc.event.Event({'foo': 'bar'})
         self.assertEquals('bar', event.get('foo'))
@@ -29,7 +29,7 @@ class TestEvent(unittest.TestCase):
 def mylistener(event):
     event.set('enter', True)
 
-class TestEvent(unittest.TestCase):
+class EventTest(unittest.TestCase):
     def test_init(self):
         dispatcher = ioc.event.Dispatcher()
 

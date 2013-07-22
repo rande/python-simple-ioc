@@ -4,7 +4,7 @@ import unittest
 import ioc.component, ioc.exceptions, exceptions
 import tests.ioc.service
 
-class TestDefinition(unittest.TestCase):
+class DefinitionTest(unittest.TestCase):
     def test_init(self):
         definition = ioc.component.Definition()
         self.assertIsNone(definition.clazz)
@@ -19,7 +19,7 @@ class TestDefinition(unittest.TestCase):
 
         self.assertEquals([{}], definition.get_tag('jinja.filter'))
 
-class TestParameterHolder(unittest.TestCase):
+class ParameterHolderTest(unittest.TestCase):
     def test_init(self):
         parameter_holder = ioc.component.ParameterHolder()
 
@@ -44,7 +44,7 @@ class TestParameterHolder(unittest.TestCase):
         with self.assertRaises(ioc.exceptions.UnknownParameter):
             parameter_holder.get('error')
         
-class TestParameterResolver(unittest.TestCase):
+class ParameterResolverTest(unittest.TestCase):
     def test_init(self):
         parameter_resolver = ioc.component.ParameterResolver()
 
@@ -119,7 +119,7 @@ class TestParameterResolver(unittest.TestCase):
             parameter_resolver.resolve("%bonjour% %le_monde%", holder)
 
 
-class TestContainer(unittest.TestCase):
+class ContainerTest(unittest.TestCase):
     def setUp(self):
         self.container = ioc.component.Container()
 
@@ -137,13 +137,13 @@ class TestContainer(unittest.TestCase):
         with self.assertRaises(ioc.exceptions.UnknownService):
             self.container.get('fake')
 
-class TestContainerBuilder(unittest.TestCase):
+class ContainerBuilderTest(unittest.TestCase):
     def setUp(self):
         self.container = ioc.component.ContainerBuilder()
 
     def test_get_class(self):
         with self.assertRaises(exceptions.AttributeError):
-            self.container.get_class(ioc.component.Definition('tests.ioc.component.Fake'))
+            self.container.get_class(ioc.component.Definition('tests.ioc.test_component.Fake'))
 
         definition = ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'})
 

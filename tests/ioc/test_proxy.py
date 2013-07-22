@@ -12,7 +12,7 @@ class FakeService(object):
     def method(self):
         return "method"
 
-class TestProxy(unittest.TestCase):
+class ProxyTest(unittest.TestCase):
 
     def test_support(self):
 

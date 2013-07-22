@@ -6,7 +6,7 @@ import exceptions, os
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
-class TestFilesystemLocator(unittest.TestCase):
+class FilesystemLocatorTest(unittest.TestCase):
 
     def test_locate_with_fake_path(self):
         locator = ioc.locator.FileSystemLocator('fake')
@@ -19,7 +19,7 @@ class TestFilesystemLocator(unittest.TestCase):
 
         self.assertEquals(current_dir + "/../fixtures/services.yml", locator.locate('services.yml'))
 
-class TestFunctionLocator(unittest.TestCase):
+class FunctionLocatorTest(unittest.TestCase):
     def test_locate_with_fake_path(self):
         def function(resource):
             return None
@@ -37,7 +37,7 @@ class TestFunctionLocator(unittest.TestCase):
 
         self.assertEquals("/mypath/services.yml", locator.locate('services.yml'))
 
-class TestPrefixLocator(unittest.TestCase):
+class PrefixLocatorTest(unittest.TestCase):
     def test_locate_with_fake_path(self):
         locator = ioc.locator.PrefixLocator({})
 
@@ -51,7 +51,7 @@ class TestPrefixLocator(unittest.TestCase):
 
         self.assertEquals(current_dir + "/../fixtures/services.yml", locator.locate('app:services.yml'))
 
-class TestChoiceLocator(unittest.TestCase):
+class ChoiceLocatorTest(unittest.TestCase):
     def test_locate(self):
         locator = ioc.locator.ChoiceLocator([
             ioc.locator.FileSystemLocator("/tmp"),
@@ -60,7 +60,7 @@ class TestChoiceLocator(unittest.TestCase):
 
         self.assertEquals(current_dir + "/../fixtures/services.yml", locator.locate('services.yml'))
 
-class TestPackageLocator(unittest.TestCase):
+class PackageLocatorTest(unittest.TestCase):
     def test_locate(self):
         locator = ioc.locator.PackageLocator('tests', 'fixtures')
-        self.assertEquals(os.path.realpath(current_dir + "/../fixtures/services.yml"), locator.locate('services.yml'))
+        self.assertEquals("tests/fixtures/services.yml", locator.locate('services.yml'))
