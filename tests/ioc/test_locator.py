@@ -63,4 +63,4 @@ class ChoiceLocatorTest(unittest.TestCase):
 class PackageLocatorTest(unittest.TestCase):
     def test_locate(self):
         locator = ioc.locator.PackageLocator('tests', 'fixtures')
-        self.assertEquals("tests/fixtures/services.yml", locator.locate('services.yml'))
+        self.assertEquals(os.path.realpath(current_dir + "/../fixtures/services.yml"), locator.locate('services.yml'))
