@@ -1,15 +1,15 @@
 # vim: set fileencoding=utf-8 :
 
 import ioc.exceptions, ioc.helper
-import re, exceptions
-import importlib, inspect
 from ioc.proxy import Proxy
+
+import importlib, inspect, re
 
 class Extension(object):
     def load(self, config, container_builder):
         pass
 
-    def post_load(self, container_builder, container):
+    def post_load(self, container_builder):
         pass
 
     def pre_build(self, container_builder, container):
@@ -200,7 +200,7 @@ class ContainerBuilder(Container):
             extensions.append(extension)
 
         for extension in extensions:
-            extension.post_load(self, container)
+            extension.post_load(self)
 
         for extension in extensions:
             extension.pre_build(self, container)
