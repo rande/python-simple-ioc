@@ -22,8 +22,9 @@ class Extension(object):
         pass
 
 class Reference(object):
-    def __init__(self, id):
+    def __init__(self, id, method=None):
         self.id = id
+        self.method = method
 
 class WeakReference(Reference):
     pass
@@ -308,20 +309,27 @@ class ContainerBuilder(Container):
 
         return instance
 
-    def set_service(self, value, container):
-        if isinstance(value, (Reference, WeakReference)) and container.has(value.id):
-            return container.get(value.id)
-
+    def retrieve_service(self, value, container):
         if isinstance(value, (Reference, WeakReference)) and not self.has(value.id):
             raise ioc.exceptions.UnknownService(value.id)
 
-        if isinstance(value, WeakReference) and not container.has(value.id):
-            return Proxy(container, value.id)
+        if isinstance(value, (Reference)):
+            if not container.has(value.id):
+                service = self.get_service(value.id, self.get(value.id), container)
+            else:
+                service = container.get(value.id)
 
-        if isinstance(value, Reference) and not container.has(value.id):
-            return self.get_service(value.id, self.get(value.id), container)
+            # a reference can point a service's method, and not the service itself...
+            if value.method:
+                return getattr(service, value.method)
 
-        if isinstance(value, Reference) and container.has(value.id):
+            return service
+
+        if isinstance(value, (WeakReference)):
+            # if the container already has the service return the service and not the proxy
+            if not container.has(value.id):
+                return Proxy(container, value.id)
+
             return container.get(value.id)
 
         if isinstance(value, Definition):
@@ -337,6 +345,6 @@ class ContainerBuilder(Container):
 
     def set_services(self, arguments, container):
         for pos in ioc.helper.get_keys(arguments):
-            arguments[pos] = self.set_service(arguments[pos], container)
+            arguments[pos] = self.retrieve_service(arguments[pos], container)
 
         return arguments

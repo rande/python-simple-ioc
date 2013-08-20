@@ -16,5 +16,6 @@ class Foo(object):
         self.fake = fake
         self.weak_reference = weak_reference
 
+
 class WeakReference(object):
     pass

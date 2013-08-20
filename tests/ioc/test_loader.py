@@ -20,7 +20,7 @@ class YamlLoaderTest(unittest.TestCase):
         loader = ioc.loader.YamlLoader()
         loader.load("%s/../fixtures/services.yml" % current_dir, builder)
 
-        self.assertEquals(3, len(builder.services))
+        self.assertEquals(4, len(builder.services))
         self.assertTrue('foo' in builder.services)
         self.assertTrue('fake' in builder.services)
 
@@ -42,7 +42,6 @@ class YamlLoaderTest(unittest.TestCase):
         self.assertEquals(['foo'], builder.get_ids_by_tag('jinja.filter'))
 
     def test_reference(self):
-
         loader = ioc.loader.YamlLoader()
         
         arguments = ['@fake', ['@hello', '#@weak_reference'], 1]
@@ -62,3 +61,17 @@ class YamlLoaderTest(unittest.TestCase):
         self.assertIsInstance(arguments['boo'][0], ioc.component.Reference)
 
         self.assertEquals(arguments['fake'].id, 'hello')
+
+    def test_reference_method(self):
+        builder = ioc.component.ContainerBuilder()
+
+        loader = ioc.loader.YamlLoader()
+        loader.load("%s/../fixtures/services.yml" % current_dir, builder)
+
+        definition = builder.get('method_reference')
+
+        self.assertIsInstance(definition, ioc.component.Definition)
+        self.assertIsInstance(definition.arguments[0], ioc.component.Reference)
+        self.assertEquals("fake", definition.arguments[0].id)
+        self.assertEquals("set_ok", definition.arguments[0].method)
+        

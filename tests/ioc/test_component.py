@@ -211,3 +211,15 @@ class ContainerBuilderTest(unittest.TestCase):
         self.assertIsInstance(container.get('foo').mandatory, tests.ioc.service.Fake)
         self.assertIsInstance(container.get('foo').mandatory.mandatory, tests.ioc.service.Fake)
         
+    def test_reference_with_method(self):
+        self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Fake', [ioc.component.Reference('service.id.2','set_ok')]))
+        self.container.add('service.id.2', ioc.component.Definition('tests.ioc.service.Fake', ['foo']))
+
+        container = ioc.component.Container()
+
+        self.container.build_container(container)
+
+        self.assertEquals(container.get('service.id.1').mandatory, container.get('service.id.2').set_ok)
+
+
+

@@ -84,6 +84,10 @@ class YamlLoader(Loader):
 
     def set_reference(self, value):
         if ioc.helper.is_scalar(value) and value[0:1] == '@':
+            if '#' in value:
+                id, method = value.split("#")
+                return Reference(id[1:], method)
+
             return Reference(value[1:])
 
         if ioc.helper.is_scalar(value) and value[0:2] == '#@':
