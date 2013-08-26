@@ -17,4 +17,7 @@ class Extension(ioc.component.Extension):
                 if 'method' not in option:
                     break                
 
-                dispatcher.add_listener(option['name'], getattr(container.get(id), option['method']))
+                if 'priority' not in option:
+                    option['priority'] = 0
+
+                dispatcher.add_listener(option['name'], getattr(container.get(id), option['method']), option['priority'])
