@@ -29,7 +29,7 @@ class EventTest(unittest.TestCase):
 def mylistener(event):
     event.set('enter', True)
 
-class EventTest(unittest.TestCase):
+class EventDispatcherTest(unittest.TestCase):
     def test_init(self):
         dispatcher = ioc.event.Dispatcher()
 
@@ -56,3 +56,22 @@ class EventTest(unittest.TestCase):
         })
 
         self.assertFalse(event.has('enter'))
+
+    def test_get_listener(self):
+        listeners = [
+            ('event32', 32),
+            ('event0', 0),
+            ('event1', 1),
+            ('event-1', -1)
+        ]
+
+        dispatcher = ioc.event.Dispatcher()
+
+        for listener, priority in listeners:
+            dispatcher.add_listener('node.load', listener, priority)
+
+        expected = ['event32', 'event1', 'event0', 'event-1']
+
+        self.assertEquals(expected, dispatcher.get_listeners('node.load'))
+
+        

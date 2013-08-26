@@ -2,7 +2,6 @@ class Event(object):
     _propagation_stopped = False
 
     def __init__(self, data=None):
-        self.listeners = {}
         self.data = data or {}
 
     def stop_propagation(self):
@@ -21,7 +20,6 @@ class Event(object):
         return name in self.data
 
 class Dispatcher(object):
-    
     def __init__(self):
         self.listeners = {}
 
@@ -34,7 +32,7 @@ class Dispatcher(object):
         if name not in self.listeners:
             return event
 
-        for listener in self.listeners[name]:
+        for listener in self.get_listeners(name):
             listener(event)
 
             if event.stop_propagation():
@@ -42,11 +40,23 @@ class Dispatcher(object):
 
         return event
 
-    def add_listener(self, name, listener):
+    def get_listeners(self, name):
+        """
+        Return the callables related to name
+        """        
+        return map(lambda listener: listener[0], self.listeners[name])
+
+    def add_listener(self, name, listener, priority=0):
+        """
+        Add a new listener to the dispatch
+        """
         if name not in self.listeners:
             self.listeners[name] = []
 
-        self.listeners[name].append(listener)
+        self.listeners[name].append((listener, priority))
+
+        # reorder event
+        self.listeners[name].sort(key=lambda listener: listener[1], reverse=True)
 
     def remove_listener(self, name, listener):
         if name not in self.listeners:
