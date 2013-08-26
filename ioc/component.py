@@ -32,7 +32,7 @@ class WeakReference(Reference):
 class Definition(object):
     def __init__(self, clazz=None, arguments=None, kwargs=None):
         self.clazz = clazz
-        self.arguments = arguments or {} 
+        self.arguments = arguments or [] 
         self.kwargs = kwargs or {}
         self.method_calls = []
         self.property_calls = []
@@ -310,7 +310,7 @@ class ContainerBuilder(Container):
         return instance
 
     def retrieve_service(self, value, container):
-        if isinstance(value, (Reference, WeakReference)) and not self.has(value.id):
+        if isinstance(value, (Reference, WeakReference)) and not container.has(value.id) and not self.has(value.id):
             raise ioc.exceptions.UnknownService(value.id)
 
         if isinstance(value, (Reference)):
