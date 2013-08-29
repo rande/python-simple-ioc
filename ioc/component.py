@@ -30,13 +30,14 @@ class WeakReference(Reference):
     pass
 
 class Definition(object):
-    def __init__(self, clazz=None, arguments=None, kwargs=None):
+    def __init__(self, clazz=None, arguments=None, kwargs=None, abstract=False):
         self.clazz = clazz
         self.arguments = arguments or [] 
         self.kwargs = kwargs or {}
         self.method_calls = []
         self.property_calls = []
         self.tags = {}
+        self.abstract = abstract
 
     def add_call(self, method, arguments=None, kwargs=None):
         self.method_calls.append([
@@ -208,6 +209,9 @@ class ContainerBuilder(Container):
 
         # resolve services
         for id, definition in self.services.iteritems():
+            if definition.abstract:
+                continue
+
             self.get_service(id, definition, container)
 
         for extension in extensions:
@@ -232,6 +236,23 @@ class ContainerBuilder(Container):
                 'container_builder': self
             })
 
+        return container
+
+    def create_definition(self, id):
+        abstract = self.services[id]
+
+        definition = Definition(
+            clazz=abstract.clazz, 
+            arguments=ioc.helper.deepcopy(abstract.arguments),
+            kwargs=ioc.helper.deepcopy(abstract.kwargs),
+            abstract=False,
+        )
+
+        definition.method_calls = ioc.helper.deepcopy(abstract.method_calls)
+        definition.property_calls = ioc.helper.deepcopy(abstract.property_calls)
+        definition.tags = ioc.helper.deepcopy(abstract.tags)
+
+        return definition
 
     def get_class(self, definition):
         clazz = self.parameter_resolver.resolve(definition.clazz, self.parameters)
@@ -292,6 +313,9 @@ class ContainerBuilder(Container):
 
         if self.logger:
             self.logger.debug("Get service: id=%s, class=%s" % (id, definition.clazz))
+
+        if definition.abstract:
+            raise ioc.exceptions.AbstractDefinitionInitialization("The ContainerBuiler try to build an abstract definition, id=%s, class=%s" % (id, definition.clazz))
 
         if container.has(id):
             return container.get(id)

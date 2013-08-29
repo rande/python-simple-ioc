@@ -22,3 +22,6 @@ class DuplicateServiceDefinition(Exception):
 
 class ParameterHolderIsFrozen(Exception):
     pass
+
+class AbstractDefinitionInitialization(Exception):
+    pass

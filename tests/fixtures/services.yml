@@ -29,3 +29,7 @@ services:
         class: tests.ioc.service.Fake
         arguments:
             - "@fake#set_ok"
+
+    abstract_service:
+        class: tests.ioc.service.Fake
+        abstract: true

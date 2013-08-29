@@ -221,5 +221,31 @@ class ContainerBuilderTest(unittest.TestCase):
 
         self.assertEquals(container.get('service.id.1').mandatory, container.get('service.id.2').set_ok)
 
+    def test_exception_for_abstract_definition(self):
+        definition = ioc.component.Definition('tests.ioc.service.Fake', ['foo'], abstract=True)
 
+        container = ioc.component.Container()
 
+        with self.assertRaises(ioc.exceptions.AbstractDefinitionInitialization):
+            self.container.get_service("foo", definition, container)
+
+    def test_abstracted_service_not_in_the_container(self):
+        definition = ioc.component.Definition('tests.ioc.service.Fake', ['foo'], abstract=True)
+
+        self.container.add('service.id.abstract', definition)
+
+        container = ioc.component.Container()
+
+        self.container.build_container(container)
+
+        self.assertEquals(1, len(container.services))
+
+    def test_create_definition_from_abstract_definition(self):
+        self.container.add('service.id.abstract', ioc.component.Definition('tests.ioc.service.Fake', ['foo'], abstract=True))
+
+        definition = self.container.create_definition('service.id.abstract')
+
+        self.container.add('service.id.1', definition)
+
+        container = self.container.build_container(ioc.component.Container())
+        self.assertEquals(2, len(container.services))

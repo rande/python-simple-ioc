@@ -55,10 +55,14 @@ class YamlLoader(Loader):
                 if 'tags' not in meta:
                     meta['tags'] = {}
 
+                if 'abstract' not in meta:
+                    meta['abstract'] = False
+
                 definition = Definition(
                     clazz=meta['class'], 
                     arguments=self.set_references(meta['arguments']), 
-                    kwargs=self.set_references(meta['kwargs'])
+                    kwargs=self.set_references(meta['kwargs']),
+                    abstract=meta['abstract']
                 )
 
                 for call in meta['calls']:
