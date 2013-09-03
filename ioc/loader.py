@@ -1,9 +1,10 @@
 # vim: set fileencoding=utf-8 :
 
-import yaml
+import yaml, collections
 
 from ioc.component import Definition, Reference, WeakReference
 import ioc.helper, ioc.exceptions
+from misc import OrderedDictYAMLLoader
 
 class Loader(object):
     def fix_config(self, config):
@@ -20,7 +21,7 @@ class YamlLoader(Loader):
     def load(self, file, container_builder):
 
         try:
-            data = yaml.load(open(file).read())
+            data = yaml.load(open(file).read(), OrderedDictYAMLLoader)
         except yaml.scanner.ScannerError, e:
             raise ioc.exceptions.LoadingError("file %s, \nerror: %s" % (file, e))
 
