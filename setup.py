@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ioc",
-    version="0.0.14",
+    version="0.0.15",
     description="A small dependency injection container based on Symfony2 Dependency Component",
     author="Thomas Rabaix",
     author_email="thomas.rabaix@gmail.com",
