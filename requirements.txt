@@ -1,2 +1,4 @@
 PyYAML
 unittest2
+coverage
+nose
