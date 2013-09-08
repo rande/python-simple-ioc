@@ -53,8 +53,8 @@ def get_keys(arguments):
     return []
 
 class Dict(object):
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, data=None):
+        self.data = data or {}
 
     def get(self, name, default=None):
         data = self.data
@@ -70,6 +70,7 @@ class Dict(object):
     def get_dict(self, name, default=None):
         default = default or {}
         value = self.get(name, default)
+
         if not isinstance(value, Dict):
             value = Dict(value)
 

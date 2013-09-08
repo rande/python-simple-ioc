@@ -36,3 +36,8 @@ class HelperTest(unittest.TestCase):
         self.assertEquals('value', d.get('key'))
         self.assertEquals(None, d.get('key.fake'))
         self.assertEquals('default', d.get('key.fake', 'default'))
+
+        config = ioc.helper.Dict()
+        managers = config.get_dict('managers', {'foo': 'bar'})
+
+        self.assertEquals(managers.get('foo'), 'bar')
