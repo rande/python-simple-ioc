@@ -2,3 +2,5 @@ PyYAML
 unittest2
 coverage
 nose
+jinja2
+mailer
