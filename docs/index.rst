@@ -17,6 +17,7 @@ Contents:
    tag
    event_dispatcher
    extra
+   locator
 
 Indices and tables
 ==================

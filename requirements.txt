@@ -4,3 +4,4 @@ coverage
 nose
 jinja2
 mailer
+Sphinx==1.1.3

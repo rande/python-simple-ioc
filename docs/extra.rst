@@ -83,7 +83,7 @@ Services available:
 
 
 redis_wrap
---------
+----------
 
 redis-wrap_ implements a wrapper for Redis datatypes so they mimic the datatypes found in Python
 
@@ -131,6 +131,7 @@ Mailer
         use_ssl: false
 
 
+.. _redis-wrap: https://github.com/Doist/redis_wrap
 .. _Flask: http://flask.pocoo.org/
 .. _Redis-Py: https://github.com/andymccurdy/redis-py
 .. _Redis: http://redis.io/
