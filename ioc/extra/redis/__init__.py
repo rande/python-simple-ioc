@@ -1,4 +1,3 @@
-import exceptions
 
 class Manager(object):
     def __init__(self, default=None, connections=None, clients=None):
@@ -16,7 +15,7 @@ class Manager(object):
         if name in self.connections:
             return self.connections[name]
 
-        raise exceptions.KeyError('Unable to find the the valid connection')
+        raise KeyError('Unable to find the the valid connection')
 
     def add_client(self, name, client):
         self.clients[name] = client
@@ -26,7 +25,7 @@ class Manager(object):
             return self.clients.values()[0]
 
         if not self.default:
-            raise exceptions.KeyError('No default client set')
+            raise KeyError('No default client set')
 
         return self.get_client(self, self.default)
         
@@ -37,4 +36,4 @@ class Manager(object):
         if name in self.clients:
             return self.clients[name]
 
-        raise exceptions.KeyError('Unable to find the the valid connection')
+        raise KeyError('Unable to find the the valid connection')

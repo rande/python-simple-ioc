@@ -1,7 +1,7 @@
 # vim: set fileencoding=utf-8 :
 
 import unittest2 as unittest
-import ioc.component, ioc.exceptions, exceptions
+import ioc.component, ioc.exceptions
 import tests.ioc.service
 
 class DefinitionTest(unittest.TestCase):
@@ -142,7 +142,7 @@ class ContainerBuilderTest(unittest.TestCase):
         self.container = ioc.component.ContainerBuilder()
 
     def test_get_class(self):
-        with self.assertRaises(exceptions.AttributeError):
+        with self.assertRaises(AttributeError):
             self.container.get_class(ioc.component.Definition('tests.ioc.test_component.Fake'))
 
         definition = ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'})

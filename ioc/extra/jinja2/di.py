@@ -14,7 +14,7 @@ class Extension(ioc.component.Extension):
         # register template
         # retrieve all extensions and build a valid MapPrefixLoader dict
         mapping = {}
-        for name, config in container_builder.extensions.iteritems():
+        for name, config in container_builder.extensions.items():
             mapping[name] = jinja2.FileSystemLoader([
                 "%s/resources/%s/templates" % (container_builder.parameters.get('project.root_folder'), name),
                 "%s/resources/templates" % os.path.dirname(importlib.import_module(name).__file__),

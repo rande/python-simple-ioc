@@ -2,14 +2,13 @@
 
 import unittest2 as unittest
 import ioc.event
-import exceptions
 
 class EventTest(unittest.TestCase):
     def test_init(self):
         event = ioc.event.Event({'foo': 'bar'})
         self.assertEquals('bar', event.get('foo'))
 
-        with self.assertRaises(exceptions.KeyError):
+        with self.assertRaises(KeyError):
             self.assertEquals('bar', event.get('foo2'))
 
         self.assertFalse(event.has('foo2'))

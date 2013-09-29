@@ -10,5 +10,5 @@ class Extension(ioc.component.Extension):
     def post_build(self, container_builder, container):
         import redis_wrap
 
-        for name, id in container.parameters.get('ioc.extra.redis_wrap.clients').iteritems():
+        for name, id in container.parameters.get('ioc.extra.redis_wrap.clients').items():
             redis_wrap.SYSTEMS[name] = container.get(id)

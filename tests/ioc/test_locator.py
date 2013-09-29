@@ -2,7 +2,7 @@
 
 import unittest2 as unittest
 import ioc.locator
-import exceptions, os
+import os
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 

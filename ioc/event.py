@@ -44,7 +44,7 @@ class Dispatcher(object):
         """
         Return the callables related to name
         """        
-        return map(lambda listener: listener[0], self.listeners[name])
+        return list(map(lambda listener: listener[0], self.listeners[name]))
 
     def add_listener(self, name, listener, priority=0):
         """

@@ -1,1 +1,1 @@
-from command import Command, CommandManager, HelpCommand
+from .command import Command, CommandManager, HelpCommand

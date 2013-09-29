@@ -41,3 +41,14 @@ class HelperTest(unittest.TestCase):
         managers = config.get_dict('managers', {'foo': 'bar'})
 
         self.assertEquals(managers.get('foo'), 'bar')
+
+    def test_deepcopy(self):
+
+        values = [
+            {'sad': 1},
+            ('%tuple%', 2)
+        ]
+
+        for value in values:
+            self.assertEquals(value, ioc.helper.deepcopy(value))
+        

@@ -43,8 +43,14 @@ class FileSystemLocator(BaseLocator):
     """
 
     def __init__(self, searchpath):
-        if isinstance(searchpath, basestring):
-            searchpath = [searchpath]
+        
+        try:
+            if isinstance(searchpath, basestring):
+                searchpath = [searchpath]
+        except NameError:
+            if isinstance(searchpath, str):
+                searchpath = [searchpath]
+
         self.searchpath = list(searchpath)
 
     def locate(self, resource):

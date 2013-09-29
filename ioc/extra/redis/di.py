@@ -17,7 +17,7 @@ class Extension(ioc.component.Extension):
 
         manager = container_builder.get('ioc.extra.redis')
 
-        for name, parameters in config.get_dict('connections', {}).all().iteritems():
+        for name, parameters in config.get_dict('connections', {}).all().items():
             id = "ioc.extra.redis.connection.%s" % name
             container_builder.add(id, ioc.component.Definition('redis.ConnectionPool', kwargs={
                 'host':             parameters.get('host', 'localhost'),
@@ -32,7 +32,7 @@ class Extension(ioc.component.Extension):
 
             manager.add_call('add_connection', arguments=[name, ioc.component.Reference(id)])
 
-        for name, parameters in config.get_dict('clients', {}).all().iteritems():
+        for name, parameters in config.get_dict('clients', {}).all().items():
             id_connection = "ioc.extra.redis.connection.%s" % parameters.get('connection')
             id = "ioc.extra.redis.client.%s" % name
 

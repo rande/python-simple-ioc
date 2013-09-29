@@ -4,11 +4,11 @@ import yaml, collections
 
 from ioc.component import Definition, Reference, WeakReference
 import ioc.helper, ioc.exceptions
-from misc import OrderedDictYAMLLoader
+from .misc import OrderedDictYAMLLoader
 
 class Loader(object):
     def fix_config(self, config):
-        for key, value in config.iteritems():
+        for key, value in config.items():
             if isinstance(value, dict):
                 config[key] = self.fix_config(value)
 
@@ -22,10 +22,10 @@ class YamlLoader(Loader):
 
         try:
             data = yaml.load(open(file).read(), OrderedDictYAMLLoader)
-        except yaml.scanner.ScannerError, e:
+        except yaml.scanner.ScannerError as e:
             raise ioc.exceptions.LoadingError("file %s, \nerror: %s" % (file, e))
 
-        for extension, config in data.iteritems():
+        for extension, config in data.items():
             if extension in ['parameters', 'services']:
                 continue
 
@@ -35,11 +35,11 @@ class YamlLoader(Loader):
             container_builder.add_extension(extension, self.fix_config(config.copy()))
 
         if 'parameters' in data:
-            for key, value in data['parameters'].iteritems():
+            for key, value in data['parameters'].items():
                 container_builder.parameters.set(key, value)
 
         if 'services' in data:
-            for id, meta in data['services'].iteritems():
+            for id, meta in data['services'].items():
 
                 if 'arguments' not in meta:
                     meta['arguments'] = []
@@ -81,7 +81,7 @@ class YamlLoader(Loader):
                         (call[0], self.set_references(call[1]), self.set_references(call[2]))
                     )
 
-                for tag, options in meta['tags'].iteritems():
+                for tag, options in meta['tags'].items():
                     for option in options:
                         definition.add_tag(tag, option)
 

@@ -13,16 +13,17 @@ def deepcopy(value):
     We only need to make sure the provided data is a copy per key, object does
     not need to be copied.
     """
+
     if not isinstance(value, (dict, list, tuple)):
         return value
 
     if isinstance(value, dict):
         copy = {}
-        for k, v in value.iteritems():
+        for k, v in value.items():
             copy[k] = deepcopy(v)
 
     if isinstance(value, tuple):
-        copy = range(len(value))
+        copy = list(range(len(value)))
 
         for k in get_keys(list(value)):
             copy[k] = deepcopy(value[k])
@@ -30,7 +31,7 @@ def deepcopy(value):
         copy = tuple(copy)
 
     if isinstance(value, list):
-        copy = range(len(value))
+        copy = list(range(len(value)))
 
         for k in get_keys(value):
             copy[k] = deepcopy(value[k])
@@ -48,7 +49,7 @@ def get_keys(arguments):
         return range(len(arguments))
 
     if isinstance(arguments, (dict)):
-        return arguments.iterkeys()
+        return arguments.keys()
 
     return []
 
@@ -118,7 +119,7 @@ def build(files, logger=None, parameters=None):
 
     container = ioc.component.Container()
 
-    for name, value in parameters.iteritems():
+    for name, value in parameters.items():
         container_builder.parameters.set(name, value)
 
     container_builder.build_container(container)

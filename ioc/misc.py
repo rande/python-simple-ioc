@@ -25,8 +25,8 @@ class OrderedDictYAMLLoader(yaml.Loader):
     def __init__(self, *args, **kwargs):
         yaml.Loader.__init__(self, *args, **kwargs)
 
-        self.add_constructor(u'tag:yaml.org,2002:map', type(self).construct_yaml_map)
-        self.add_constructor(u'tag:yaml.org,2002:omap', type(self).construct_yaml_map)
+        self.add_constructor('tag:yaml.org,2002:map', type(self).construct_yaml_map)
+        self.add_constructor('tag:yaml.org,2002:omap', type(self).construct_yaml_map)
 
     def construct_yaml_map(self, node):
         data = OrderedDict()
@@ -46,10 +46,11 @@ class OrderedDictYAMLLoader(yaml.Loader):
             key = self.construct_object(key_node, deep=deep)
             try:
                 hash(key)
-            except TypeError, exc:
+            except TypeError as exc:
                 raise yaml.constructor.ConstructorError('while constructing a mapping',
                     node.start_mark, 'found unacceptable key (%s)' % exc, key_node.start_mark)
             value = self.construct_object(value_node, deep=deep)
             mapping[key] = value
+
         return mapping
 

@@ -60,7 +60,7 @@ class HelpCommand(Command):
     def execute(self, args, output):
         
         output.write("Commands available: \n")
-        for name, (parser, command) in self.command_manager.commands.iteritems():
+        for name, (parser, command) in self.command_manager.commands.items():
             output.write(" > % -20s : %s \n" % (name, parser.description))
 
         output.write("\n--\nPython IoC - Thomas Rabaix <thomas.rabaix@gmail.com>\n")

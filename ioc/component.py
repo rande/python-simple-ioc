@@ -180,7 +180,7 @@ class ContainerBuilder(Container):
         self.extensions[name] = config
 
     def get_ids_by_tag(self, name):
-        return [id for id, definition in self.services.iteritems() if definition.has_tag(name)]
+        return [id for id, definition in self.services.items() if definition.has_tag(name)]
 
     def build_container(self, container):
         if self.logger:
@@ -190,7 +190,7 @@ class ContainerBuilder(Container):
         container.add("service_container", container)
         self.parameters.set('ioc.extensions', self.extensions.keys())
 
-        for name, config in self.extensions.iteritems():
+        for name, config in self.extensions.items():
             name = "%s.di.Extension" % name
 
             if self.logger:
@@ -208,7 +208,7 @@ class ContainerBuilder(Container):
             extension.pre_build(self, container)
 
         # resolve services
-        for id, definition in self.services.iteritems():
+        for id, definition in self.services.items():
             if definition.abstract:
                 continue
 
@@ -221,7 +221,7 @@ class ContainerBuilder(Container):
             self.logger.debug("Building container is over!")
             self.logger.debug("Starting resolving all parameters!")
 
-        for name, value in self.parameters.all().iteritems():
+        for name, value in self.parameters.all().items():
             container.parameters.set(
                 name, 
                 self.parameter_resolver.resolve(value, self.parameters)
@@ -310,15 +310,14 @@ class ContainerBuilder(Container):
         return instance
 
     def get_service(self, id, definition, container):
-
-        if self.logger:
-            self.logger.debug("Get service: id=%s, class=%s" % (id, definition.clazz))
-
         if definition.abstract:
             raise ioc.exceptions.AbstractDefinitionInitialization("The ContainerBuiler try to build an abstract definition, id=%s, class=%s" % (id, definition.clazz))
 
         if container.has(id):
             return container.get(id)
+
+        # if self.logger:
+        #     self.logger.debug("Get service: id=%s, class=%s" % (id, definition.clazz))
 
         if id in self.stack:
             if self.logger:

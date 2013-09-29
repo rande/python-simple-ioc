@@ -54,10 +54,10 @@ class Extension(ioc.component.Extension):
 
         c = config.get_dict('config', {})
 
-        for name, value in defaults.iteritems():
+        for name, value in defaults.items():
             container_builder.parameters.set('ioc.extra.flask.app.%s' % name, c.get(name, value))
 
-        for name, value in c.all().iteritems():
+        for name, value in c.all().items():
             container_builder.parameters.set('ioc.extra.flask.app.%s' % name, c.get(name, value))
             defaults[name] = value
 
@@ -66,7 +66,7 @@ class Extension(ioc.component.Extension):
     def configure_blueprint(self, config, container_builder):
         definition = container_builder.get('ioc.extra.flask.app')
 
-        for id, kwargs in config.get_dict('blueprints', {}).all().iteritems():
+        for id, kwargs in config.get_dict('blueprints', {}).all().items():
             definition.add_call('register_blueprint', [ioc.component.Reference(id)], kwargs.all())
 
     def post_build(self, container_builder, container):
@@ -88,11 +88,11 @@ class Extension(ioc.component.Extension):
 
             jinja2.loader.loaders.append(app.create_global_jinja_loader())
 
-            for name, value in app.jinja_env.globals.iteritems():
+            for name, value in app.jinja_env.globals.items():
                 if name not in jinja2.globals:
                     jinja2.globals[name] = value                
 
-            for name, value in app.jinja_env.filters.iteritems():
+            for name, value in app.jinja_env.filters.items():
                 if name not in jinja2.filters:
                     jinja2.filters[name] = value                
 
