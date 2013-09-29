@@ -8,4 +8,4 @@ python:
 install: "pip install -r requirements.txt --use-mirrors"
 
 # command to run tests
-script: nosetests && sphinx-build -nW -b html -d _build/doctrees . _build/html
+script: nosetests && sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
