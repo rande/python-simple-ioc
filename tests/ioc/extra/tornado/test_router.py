@@ -25,6 +25,6 @@ class RouterTest(unittest.TestCase):
         self.router.add("blog_post", "/blog/<string:slug>", view)
 
         self.assertEquals("/", self.router.generate("homepage"))
-        self.assertEquals("/blog/hello", self.router.generate("blog_post", {'slug': 'hello'}))
+        self.assertEquals("/blog/hello", self.router.generate("blog_post", slug="hello"))
 
-        self.assertEquals("http://localhost/blog/hello", self.router.generate("blog_post", {'slug': 'hello'}, force_external=True))
+        self.assertEquals("http://localhost/blog/hello", self.router.generate("blog_post", slug="hello", force_external=True))

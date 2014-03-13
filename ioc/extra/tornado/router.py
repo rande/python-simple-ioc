@@ -30,6 +30,5 @@ class Router(object):
 
         return name, parameters, self._view_functions[name]
 
-    def generate(self, name, values=None, method=None, force_external=False, append_unknown=True):
-
-        return self.adapter().build(name, values, method, force_external, append_unknown)
+    def generate(self, name, method=None, force_external=False, append_unknown=True, **kwargs):
+        return self.adapter().build(name, kwargs, method, force_external, append_unknown)

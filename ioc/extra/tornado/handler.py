@@ -52,9 +52,13 @@ class RouterHandler(BaseHandler):
             self.event_dispatcher.dispatch('handler.not_found', {
                 'handler': self,
             })
-        except Exception:
+        except Exception, e:
             self.set_status(500)
             self.write("An unexpected error occurred")
+
+            import traceback
+            traceback.print_exc()
+
 
             self.event_dispatcher.dispatch('handler.exception', {
                 'handler': self,
