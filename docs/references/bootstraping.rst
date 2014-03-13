@@ -1,7 +1,7 @@
-Bootstraping
-============
+Bootstrapping
+=============
 
-Here a quick exemple on how to use the ioc to initialize a project.
+Here a quick example on how to use the ioc to initialize a project.
 
 First, create a ``start.py`` file with the following code. 
 

@@ -3,6 +3,9 @@ Flask
 
 Flask_ is a web micro framework
 
+Configuration
+~~~~~~~~~~~~~
+
 .. code-block:: yaml
 
     ioc.extra.flask:
@@ -41,6 +44,8 @@ Flask_ is a web micro framework
         blueprints:
             - element.flask.blueprint
 
+Services available
+~~~~~~~~~~~~~~~~~~
 
 Services available:
 

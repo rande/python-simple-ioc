@@ -1,6 +1,9 @@
 Mailer
 ------
 
+Configuration
+~~~~~~~~~~~~~
+
 .. code-block:: yaml
 
     ioc.extra.mailer:

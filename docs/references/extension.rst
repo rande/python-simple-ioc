@@ -51,7 +51,6 @@ and to use it:
 
 .. code-block:: python
 
-
     import ioc
 
     container = ioc.build(['config.yml'])

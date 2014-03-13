@@ -3,6 +3,9 @@ Redis-Py
 
 Redis-Py_ is an interface to the Redis_ key-value store.
 
+Configuration
+~~~~~~~~~~~~~
+
 .. code-block:: yaml
 
     ioc.extra.redis:
@@ -21,7 +24,9 @@ Redis-Py_ is an interface to the Redis_ key-value store.
                 encoding_errors:    'strict'
                 decode_responses:   false
 
-Services available:
+Services available
+~~~~~~~~~~~~~~~~~~
+
 
 - ioc.extra.redis.manager: the Redis manager to retrieve client and connection
 - ioc.extra.redis.connection.default: the ``default`` connection
