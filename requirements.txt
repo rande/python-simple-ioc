@@ -2,4 +2,3 @@ PyYAML
 coverage
 nose
 jinja2
-Sphinx

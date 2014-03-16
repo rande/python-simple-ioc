@@ -1,0 +1,20 @@
+services:
+    ioc.extra.tornado.router:
+        class: ioc.extra.tornado.router.Router
+
+    ioc.extra.tornado.application:
+        class: tornado.web.Application
+        arguments: []
+        kwargs:
+            debug:                   True
+            autoreload:              True
+            compiled_template_cache: True
+            static_hash_cache:       True
+            serve_traceback:         True
+            gzip:                    True
+            cookie_secret:           MySecret
+
+    ioc.extra.tornado.asset_helper:
+        class: ioc.extra.tornado.router.AssetHelper
+        arguments: [ "%ioc.extra.tornado.static_public_path%", '@ioc.extra.tornado.router', 'element.static']
+

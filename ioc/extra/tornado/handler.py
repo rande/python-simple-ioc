@@ -2,6 +2,7 @@ from werkzeug.routing import NotFound
 
 import tornado.web
 import tornado.httpclient
+import mimetypes
 
 class BaseHandler(tornado.web.RequestHandler):
     def dispatch(self):
@@ -25,51 +26,98 @@ class BaseHandler(tornado.web.RequestHandler):
     def options(self):
         return self.dispatch()
 
+    def is_finish(self):
+        return self._finished
+
+    def get_header(self, name):
+        return self._headers.get(name)
+
 class RouterHandler(BaseHandler):
-    def initialize(self, router, event_dispatcher):
+    def initialize(self, router, event_dispatcher, logger=None):
         self.router = router
         self.event_dispatcher = event_dispatcher
+        self.logger = logger
 
     def dispatch(self):
         try:
-            self.event_dispatcher.dispatch('handler.request', {'handler': self})
+            self.event_dispatcher.dispatch('handler.request', {
+                'request_handler': self,
+                'request': self.request
+            })
+
+            if self.is_finish():
+                return
 
             name, parameters, callback = self.router.match(path_info=self.request.path, method=self.request.method)
 
+            if self.logger:
+                self.logger.debug("[ioc.extra.tornado.RouterHandler] Match name:%s with parameters:%s (%s)" % (name, parameters, callback))
+
             event = self.event_dispatcher.dispatch('handler.callback', {
-                'handler': self,
+                'request_handler': self,
+                'request': self.request,
                 'name': name,
                 'callback': callback,
                 'parameters': parameters
             })
 
+            if self.is_finish():
+                return
+
             event.get('callback')(self, **event.get('parameters'))
+
+            if self.is_finish():
+                return
 
         except NotFound:
             self.set_status(404)
             self.write("Not Found")
 
             self.event_dispatcher.dispatch('handler.not_found', {
-                'handler': self,
+                'request_handler': self,
+                'request': self.request,
             })
         except Exception, e:
             self.set_status(500)
             self.write("An unexpected error occurred")
 
             import traceback
-            traceback.print_exc()
+            self.write("<pre>" + traceback.format_exc() + "</pre>")
 
+            print traceback.print_exc()
 
             self.event_dispatcher.dispatch('handler.exception', {
-                'handler': self,
+                'request_handler': self,
+                'request': self.request,
             })
 
+        if self.is_finish():
+            return
+
         self.event_dispatcher.dispatch('handler.response', {
-            'handler': self,
+            'request_handler': self,
+            'request': self.request,
         })
 
-        self.finish()
+        if not self.is_finish():
+            self.finish()
 
         self.event_dispatcher.dispatch('handler.terminate', {
-            'handler': self,
+            'request_handler': self,
+            'request': self.request,
         })
+
+
+    def send_file(self, file):
+        """
+        Send a file to the client, it is a convenient method to avoid duplicated code
+        """
+        mime_type, encoding = mimetypes.guess_type(file)
+
+        if mime_type:
+            self.set_header('Content-Type', mime_type)
+
+        fp = open(file, 'r')
+        self.write(fp.read())
+
+        fp.close()

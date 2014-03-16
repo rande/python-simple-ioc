@@ -236,6 +236,9 @@ class ContainerBuilder(Container):
                 'container_builder': self
             })
 
+        for extension in extensions:
+            extension.start(container)
+
         return container
 
     def create_definition(self, id):
