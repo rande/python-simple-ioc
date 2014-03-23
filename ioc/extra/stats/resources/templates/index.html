@@ -1,0 +1,11 @@
+{% extends context.settings.base_template %}
+
+{% block content %}
+    <h2>Stats Index</h2>
+
+    <ul>
+        <li><a href="{{ url_for('stats_services') }}">Services</a></li>
+        <li><a href="{{ url_for('stats_parameters') }}">Parameters</a></li>
+    </ul>
+
+{% endblock %}
