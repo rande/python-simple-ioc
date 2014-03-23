@@ -1,4 +1,4 @@
-from werkzeug.routing import NotFound
+from werkzeug.routing import NotFound, RequestRedirect
 
 import tornado.web
 import tornado.httpclient
@@ -68,6 +68,10 @@ class RouterHandler(BaseHandler):
 
             if self.is_finish():
                 return
+
+        except RequestRedirect, e:
+            self.redirect(e.new_url, True, 301)
+            return
 
         except NotFound:
             self.set_status(404)

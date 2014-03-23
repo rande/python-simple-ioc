@@ -32,5 +32,5 @@ class MyHTTPTest(AsyncHTTPTestCase):
 
     def test_error(self):
         response = self.fetch('/exception')
-        self.assertEquals("An unexpected error occurred", response.body)
+        self.assertEquals("An unexpected error occurred", response.body[0:28])
         self.assertEquals(500, response.code)

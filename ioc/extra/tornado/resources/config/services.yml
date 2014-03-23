@@ -6,11 +6,11 @@ services:
         class: tornado.web.Application
         arguments: []
         kwargs:
-            debug:                   True
-            autoreload:              True
-            compiled_template_cache: True
-            static_hash_cache:       True
-            serve_traceback:         True
+            debug:                   False
+            autoreload:              False
+            compiled_template_cache: False
+            static_hash_cache:       False
+            serve_traceback:         False
             gzip:                    True
             cookie_secret:           MySecret
 
@@ -18,3 +18,10 @@ services:
         class: ioc.extra.tornado.router.AssetHelper
         arguments: [ "%ioc.extra.tornado.static_public_path%", '@ioc.extra.tornado.router', 'element.static']
 
+    ioc.extra.tornado.command.server:
+        class: ioc.extra.tornado.command.StartCommand
+        arguments:
+            - '@ioc.extra.tornado.application'
+        tags:
+            command:
+                - { name: 'tornado:start' }
