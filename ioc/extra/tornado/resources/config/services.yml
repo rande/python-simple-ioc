@@ -22,6 +22,8 @@ services:
         class: ioc.extra.tornado.command.StartCommand
         arguments:
             - '@ioc.extra.tornado.application'
+            - '@ioc.extra.tornado.router'
+
         tags:
             command:
                 - { name: 'tornado:start' }

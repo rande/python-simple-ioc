@@ -52,6 +52,7 @@ class TornadoMultiDict(object):
 
 class Router(object):
     def __init__(self, url_map=None):
+
         self._url_map = url_map or Map([])
         self._view_functions = {}
         self._adapter = None
@@ -68,6 +69,9 @@ class Router(object):
         self._view_functions[name] = view_func
 
         self._adapter = None
+
+    def bind(self, hostname):
+        self._adapter = self._url_map.bind(hostname)
 
     def adapter(self):
         if not self._adapter:
