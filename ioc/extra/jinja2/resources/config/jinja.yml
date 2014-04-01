@@ -14,6 +14,7 @@ services:
     ioc.extra.jinja2:
         class: jinja2.Environment
         kwargs: # custom value
+            auto_reload: '%ioc.debug%'
             autoescape: true 
-            cache_size: 200  
+            cache_size: 200
             loader: '@ioc.extra.jinja2.loader'

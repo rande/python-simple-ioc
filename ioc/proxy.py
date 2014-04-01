@@ -41,4 +41,3 @@ class Proxy(object):
         build_object(object, self)
 
         return repr(object.__getattribute__(self, "_obj"))
-    
