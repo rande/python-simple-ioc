@@ -24,18 +24,29 @@ class Extension(ioc.component.Extension):
         definition = container_builder.get('ioc.extra.tornado.asset_helper')
         definition.add_tag('jinja2.global', {'name': 'asset', 'method': 'generate_asset'})
 
-    def start(self, container):
-        application = container.get('ioc.extra.tornado.application')
+    def post_build(self, container_builder, container):
+        self.container = container
+
+        container.get('ioc.extra.event_dispatcher').add_listener('ioc.extra.tornado.start', self.configure_tornado)
+
+    def configure_tornado(self, event):
+
+        application = event.get('application')
+
+        self.container.get('logger').info("Attach RouterHandler")
+
         application.add_handlers(".*$", [
             ("/.*", RouterHandler, {
-                "router":           container.get('ioc.extra.tornado.router'),
-                "event_dispatcher": container.get('ioc.extra.event_dispatcher'),
-                "logger":           container.get('element.logger')
+                "router":           self.container.get('ioc.extra.tornado.router'),
+                "event_dispatcher": self.container.get('ioc.extra.event_dispatcher'),
+                "logger":           self.container.get('logger')
             })
         ])
 
+        self.container.get('logger').info("Attach StaticFileHandler")
+
         application.add_handlers(".*$", [
-            (container.parameters.get("ioc.extra.tornado.static_public_path") + "/(.*)", StaticFileHandler, {
-                "path": container.parameters.get("ioc.extra.tornado.static_folder")
+            (self.container.parameters.get("ioc.extra.tornado.static_public_path") + "/(.*)", StaticFileHandler, {
+                "path": self.container.parameters.get("ioc.extra.tornado.static_folder")
             })
         ])

@@ -23,6 +23,7 @@ services:
         arguments:
             - '@ioc.extra.tornado.application'
             - '@ioc.extra.tornado.router'
+            - '@ioc.extra.event_dispatcher'
 
         tags:
             command:

@@ -188,6 +188,11 @@ class ContainerBuilder(Container):
 
         extensions = []
         container.add("service_container", container)
+
+        if not container.has('logger'):
+            import logging
+            container.add("logger", logging.getLogger('app'))
+
         self.parameters.set('ioc.extensions', self.extensions.keys())
 
         for name, config in self.extensions.items():

@@ -70,6 +70,9 @@ class RouterHandler(BaseHandler):
                 return
 
         except RequestRedirect, e:
+            if self.logger:
+                self.logger.debug("%s: redirect: %s" % (__name__, e.new_url))
+                
             self.redirect(e.new_url, True, 301)
             return
 
@@ -88,7 +91,8 @@ class RouterHandler(BaseHandler):
             import traceback
             self.write("<pre>" + traceback.format_exc() + "</pre>")
 
-            print traceback.print_exc()
+            if self.logger:
+                self.logger.critical(traceback.print_exc())
 
             self.event_dispatcher.dispatch('handler.exception', {
                 'request_handler': self,

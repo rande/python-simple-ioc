@@ -171,7 +171,7 @@ class ContainerBuilderTest(unittest.TestCase):
 
         self.container.build_container(container)
 
-        self.assertEquals(4, len(container.services))
+        self.assertEquals(5, len(container.services))
         self.assertTrue(container.has('service.id.2'))
         self.assertIsInstance(container.get('service.id.2'), tests.ioc.service.Fake)
         self.assertIsInstance(container.get('service.id.3'), tests.ioc.service.Foo)
@@ -238,7 +238,7 @@ class ContainerBuilderTest(unittest.TestCase):
 
         self.container.build_container(container)
 
-        self.assertEquals(1, len(container.services))
+        self.assertEquals(2, len(container.services))
 
     def test_create_definition_from_abstract_definition(self):
         self.container.add('service.id.abstract', ioc.component.Definition('tests.ioc.service.Fake', ['foo'], abstract=True))
@@ -248,4 +248,4 @@ class ContainerBuilderTest(unittest.TestCase):
         self.container.add('service.id.1', definition)
 
         container = self.container.build_container(ioc.component.Container())
-        self.assertEquals(2, len(container.services))
+        self.assertEquals(3, len(container.services))

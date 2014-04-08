@@ -3,8 +3,9 @@ import tornado
 from tornado.httpserver import HTTPServer
 
 class StartCommand(Command):
-    def __init__(self, application, router):
+    def __init__(self, application, router, event_dispatcher):
         self.application = application
+        self.event_dispatcher = event_dispatcher
         self.router = router
 
     def initialize(self, parser):
@@ -15,6 +16,13 @@ class StartCommand(Command):
         parser.add_argument('--bind', '-b', default="localhost", type=str, help="bind the router to the provided named (default=localhost)")
 
     def execute(self, args, output):
+
+        output.write("Configuring tornado (event: ioc.extra.tornado.start)\n")
+
+        self.event_dispatcher.dispatch('ioc.extra.tornado.start', {
+            'application': self.application
+        })
+
         output.write("Starting tornado %s:%s\n" % (args.address, args.port))
 
         self.router.bind(args.bind)
