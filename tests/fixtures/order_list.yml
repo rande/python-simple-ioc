@@ -1,0 +1,5 @@
+list:
+    z:    "first"
+    true: "OK"
+    false: "KO"
+    a:     "last"

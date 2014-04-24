@@ -43,7 +43,9 @@ class OrderedDictYAMLLoader(yaml.Loader):
 
         mapping = OrderedDict()
         for key_node, value_node in node.value:
-            key = self.construct_object(key_node, deep=deep)
+            # key = self.construct_object(key_node, deep=deep)
+
+            key = key_node.value
             try:
                 hash(key)
             except TypeError as exc:
