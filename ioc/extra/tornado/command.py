@@ -23,7 +23,7 @@ class StartCommand(Command):
             'application': self.application
         })
 
-        output.write("Starting tornado %s:%s\n" % (args.address, args.port))
+        output.write("Starting tornado %s:%s (bind to: %s)\n" % (args.address, args.port, args.bind))
 
         self.router.bind(args.bind)
 

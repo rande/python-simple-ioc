@@ -33,7 +33,7 @@ class Extension(ioc.component.Extension):
 
         application = event.get('application')
 
-        self.container.get('logger').info("Attach RouterHandler")
+        self.container.get('logger').info("Attach ioc.extra.tornado.router.RouterHandler")
 
         application.add_handlers(".*$", [
             ("/.*", RouterHandler, {
@@ -43,7 +43,7 @@ class Extension(ioc.component.Extension):
             })
         ])
 
-        self.container.get('logger').info("Attach StaticFileHandler")
+        self.container.get('logger').info("Attach tornado.web.StaticFileHandler")
 
         application.add_handlers(".*$", [
             (self.container.parameters.get("ioc.extra.tornado.static_public_path") + "/(.*)", StaticFileHandler, {

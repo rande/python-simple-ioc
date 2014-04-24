@@ -72,7 +72,7 @@ class RouterHandler(BaseHandler):
         except RequestRedirect, e:
             if self.logger:
                 self.logger.debug("%s: redirect: %s" % (__name__, e.new_url))
-                
+
             self.redirect(e.new_url, True, 301)
             return
 
