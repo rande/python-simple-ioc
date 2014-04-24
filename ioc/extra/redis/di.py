@@ -19,6 +19,7 @@ class Extension(ioc.component.Extension):
 
         for name, parameters in config.get_dict('connections', {}).all().items():
             id = "ioc.extra.redis.connection.%s" % name
+
             container_builder.add(id, ioc.component.Definition('redis.ConnectionPool', kwargs={
                 'host':             parameters.get('host', 'localhost'),
                 'port':             parameters.get_int('port', 6379),

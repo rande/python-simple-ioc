@@ -27,7 +27,7 @@ class Manager(object):
         if not self.default:
             raise KeyError('No default client set')
 
-        return self.get_client(self, self.default)
+        return self.get_client(self, name=self.default)
         
     def get_client(self, name=None):
         if not name:
