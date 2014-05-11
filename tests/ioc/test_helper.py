@@ -3,6 +3,7 @@
 import ioc
 import os
 import unittest2 as unittest
+import yaml
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -29,8 +30,20 @@ class HelperTest(unittest.TestCase):
         self.assertEquals('the argument 1', container.parameters.get('foo.foo'))
         self.assertEquals('parameter', container.parameters.get('inline'))
 
-    def test_dict(self):
 
+    def test_deepcopy(self):
+        values = [
+            {'sad': 1},
+            ('%tuple%', 2)
+        ]
+
+        for value in values:
+            self.assertEquals(value, ioc.helper.deepcopy(value))
+
+
+class DictTest(unittest.TestCase):
+
+    def test_dict(self):
         d = ioc.helper.Dict({'key': 'value'})
 
         self.assertEquals('value', d.get('key'))
@@ -42,13 +55,19 @@ class HelperTest(unittest.TestCase):
 
         self.assertEquals(managers.get('foo'), 'bar')
 
-    def test_deepcopy(self):
+    def test_dict_iterator(self):
+        d = ioc.helper.Dict({'key': 'value'})
 
-        values = [
-            {'sad': 1},
-            ('%tuple%', 2)
-        ]
+        for key, value in d.iteritems():
+            self.assertEquals(key, 'key')
+            self.assertEquals(value, 'value')
 
-        for value in values:
-            self.assertEquals(value, ioc.helper.deepcopy(value))
-        
+    def test_all(self):
+        d = ioc.helper.Dict({'key': 'value'})
+        self.assertEquals(d.all(), {'key': 'value'})
+
+        d = ioc.helper.Dict({'key': ioc.helper.Dict({'value': 'foo'})})
+        self.assertEquals(d.all(), {'key': {'value': 'foo'}})
+
+        d = ioc.helper.Dict({'key': ioc.helper.Dict({'value': ['foo', 'bar']})})
+        self.assertEquals(d.all(), {'key': {'value': ['foo', 'bar']}})

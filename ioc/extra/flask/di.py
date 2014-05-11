@@ -43,7 +43,7 @@ class Extension(ioc.component.Extension):
             'SESSION_COOKIE_HTTPONLY':       True,
             'SESSION_COOKIE_SECURE':         False,
             'MAX_CONTENT_LENGTH':            None,
-            'SEND_FILE_MAX_AGE_DEFAULT':     12 * 60 * 60, # 12 hours
+            'SEND_FILE_MAX_AGE_DEFAULT':     12 * 60 * 60,  # 12 hours
             'TRAP_BAD_REQUEST_ERRORS':       False,
             'TRAP_HTTP_EXCEPTIONS':          False,
             'PREFERRED_URL_SCHEME':          'http',
@@ -57,7 +57,7 @@ class Extension(ioc.component.Extension):
         for name, value in defaults.items():
             container_builder.parameters.set('ioc.extra.flask.app.%s' % name, c.get(name, value))
 
-        for name, value in c.all().items():
+        for name, value in c.iteritems():
             container_builder.parameters.set('ioc.extra.flask.app.%s' % name, c.get(name, value))
             defaults[name] = value
 
@@ -66,7 +66,7 @@ class Extension(ioc.component.Extension):
     def configure_blueprint(self, config, container_builder):
         definition = container_builder.get('ioc.extra.flask.app')
 
-        for id, kwargs in config.get_dict('blueprints', {}).all().items():
+        for id, kwargs in config.get_dict('blueprints', {}).iteritems():
             definition.add_call('register_blueprint', [ioc.component.Reference(id)], kwargs.all())
 
     def post_build(self, container_builder, container):

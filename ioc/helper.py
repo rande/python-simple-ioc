@@ -80,14 +80,37 @@ class Dict(object):
     def get_int(self, name, default=None):
         return int(self.get(name, default))
 
+    def get_all(self, name, default=None):
+        return self.get_dict(name, default).all()
+
     def all(self):
-        return self.data
-        
+        def walk(data):
+            all = {}
+
+            if not isinstance(data, dict):
+                return data
+
+            for v, d in data.iteritems():
+                if isinstance(d, Dict):
+                    all[v] = d.all()
+                else:
+                    all[v] = d
+
+                if is_iterable(all[v]):
+                    walk(all[v])
+
+            return all
+
+        return walk(self.data)
+
+    def iteritems(self):
+        return self.data.iteritems()
+
     def __iter__(self):
         return iter(self.data)
 
     def __getitem__(self, key):
-        return self.data[key]     
+        return self.data[key]
 
 def build(files, logger=None, parameters=None):
 
