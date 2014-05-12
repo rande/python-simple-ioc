@@ -4,3 +4,4 @@ nose
 jinja2
 Sphinx
 tornado
+Werkzeug
