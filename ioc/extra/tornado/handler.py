@@ -76,20 +76,18 @@ class RouterHandler(BaseHandler):
             self.redirect(e.new_url, True, 301)
             return
 
-        except NotFound:
+        except NotFound, e:
             self.set_status(404)
-            self.write("Not Found")
 
             self.event_dispatcher.dispatch('handler.not_found', {
                 'request_handler': self,
                 'request': self.request,
+                'exception': e,
             })
         except Exception, e:
             self.set_status(500)
-            self.write("An unexpected error occurred")
 
             import traceback
-            self.write("<pre>" + traceback.format_exc() + "</pre>")
 
             if self.logger:
                 self.logger.critical(traceback.print_exc())
@@ -97,6 +95,7 @@ class RouterHandler(BaseHandler):
             self.event_dispatcher.dispatch('handler.exception', {
                 'request_handler': self,
                 'request': self.request,
+                'exception': e,
             })
 
         if self.is_finish():
