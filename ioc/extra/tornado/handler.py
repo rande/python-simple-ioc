@@ -2,6 +2,12 @@ from werkzeug.routing import NotFound, RequestRedirect
 
 import tornado.web
 import tornado.httpclient
+import tornado.gen
+from tornado.ioloop import IOLoop
+from tornado.concurrent import Future
+
+from ioc.extra.tornado.router import TornadoMultiDict
+
 import mimetypes
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -32,22 +38,24 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_header(self, name):
         return self._headers.get(name)
 
+    def get_form_data(self):
+        return TornadoMultiDict(self)
+
 class RouterHandler(BaseHandler):
     def initialize(self, router, event_dispatcher, logger=None):
         self.router = router
         self.event_dispatcher = event_dispatcher
         self.logger = logger
 
+    @tornado.web.asynchronous
     def dispatch(self):
+
+        result = None
+        # the handler.request might close the connection
+        if self.is_finish():
+            return
+
         try:
-            self.event_dispatcher.dispatch('handler.request', {
-                'request_handler': self,
-                'request': self.request
-            })
-
-            if self.is_finish():
-                return
-
             name, parameters, callback = self.router.match(path_info=self.request.path, method=self.request.method)
 
             if self.logger:
@@ -64,7 +72,7 @@ class RouterHandler(BaseHandler):
             if self.is_finish():
                 return
 
-            event.get('callback')(self, **event.get('parameters'))
+            result = event.get('callback')(self, **event.get('parameters'))
 
             if self.is_finish():
                 return
@@ -77,6 +85,9 @@ class RouterHandler(BaseHandler):
             return
 
         except NotFound, e:
+            if self.logger:
+                self.logger.critical("%s: NotFound: %s" % (__name__, self.request.uri))
+
             self.set_status(404)
 
             self.event_dispatcher.dispatch('handler.not_found', {
@@ -98,22 +109,34 @@ class RouterHandler(BaseHandler):
                 'exception': e,
             })
 
-        if self.is_finish():
+        # the dispatch is flagged as asynchronous by default so we make sure the finish method will be called
+        # unless the result of the callback is a Future
+
+        if isinstance(result, Future):
+            IOLoop.current().add_future(result, self.finish)
             return
 
+        if not self.is_finish():
+            self.finish()
+
+    def prepare(self):
+        self.event_dispatcher.dispatch('handler.request', {
+            'request_handler': self,
+            'request': self.request
+        })
+
+    def finish(self, *args, **kwargs):
         self.event_dispatcher.dispatch('handler.response', {
             'request_handler': self,
             'request': self.request,
         })
 
-        if not self.is_finish():
-            self.finish()
+        super(RouterHandler, self).finish()
 
         self.event_dispatcher.dispatch('handler.terminate', {
             'request_handler': self,
             'request': self.request,
         })
-
 
     def send_file(self, file):
         """
@@ -124,7 +147,7 @@ class RouterHandler(BaseHandler):
         if mime_type:
             self.set_header('Content-Type', mime_type)
 
-        fp = open(file, 'r')
+        fp = open(file, 'rb')
         self.write(fp.read())
 
         fp.close()
