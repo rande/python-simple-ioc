@@ -110,13 +110,12 @@ class RouterHandler(BaseHandler):
 
         # the dispatch is flagged as asynchronous by default so we make sure the finish method will be called
         # unless the result of the callback is a Future
-
         if isinstance(result, Future):
             IOLoop.current().add_future(result, self.finish)
             return
 
         if not self.is_finish():
-            self.finish()
+            self.finish(result=result)
 
     def prepare(self):
         self.event_dispatcher.dispatch('handler.request', {
@@ -125,9 +124,15 @@ class RouterHandler(BaseHandler):
         })
 
     def finish(self, *args, **kwargs):
+
+        result = None
+        if 'result' in kwargs:
+            result = kwargs['result']
+
         self.event_dispatcher.dispatch('handler.response', {
             'request_handler': self,
             'request': self.request,
+            'result': result
         })
 
         super(RouterHandler, self).finish()
