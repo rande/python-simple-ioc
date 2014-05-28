@@ -20,7 +20,8 @@ class StartCommand(Command):
         output.write("Configuring tornado (event: ioc.extra.tornado.start)\n")
 
         self.event_dispatcher.dispatch('ioc.extra.tornado.start', {
-            'application': self.application
+            'application': self.application,
+            'output': output
         })
 
         output.write("Starting tornado %s:%s (bind to: %s)\n" % (args.address, args.port, args.bind))

@@ -6,6 +6,7 @@ from ioc.event import Dispatcher
 from ioc.extra.tornado.router import Router
 from ioc.extra.tornado.handler import RouterHandler
 
+
 def view(handler, name=None):
     handler.write("Hello %s" % name)
 
@@ -14,11 +15,24 @@ def error(handler):
 
 class MyHTTPTest(AsyncHTTPTestCase):
     def get_app(self):
+
+        dispatcher = Dispatcher()
+
+        def error_listener(event):
+            event.get('request_handler').write('An unexpected error occurred')
+
+        def not_found_listener(event):
+            event.get('request_handler').write('Not Found')
+
+        dispatcher.add_listener('handler.not_found', not_found_listener)
+        dispatcher.add_listener('handler.exception', error_listener)
+
+
         router = Router()
         router.add("hello", "/hello/<string:name>", view, methods=['GET'])
         router.add("exception", "/exception", error, methods=['GET'])
 
-        return Application([("/.*", RouterHandler, dict(router=router, event_dispatcher=Dispatcher()))])
+        return Application([("/.*", RouterHandler, dict(router=router, event_dispatcher=dispatcher))])
 
     def test_not_found(self):
         response = self.fetch('/')
@@ -32,5 +46,6 @@ class MyHTTPTest(AsyncHTTPTestCase):
 
     def test_error(self):
         response = self.fetch('/exception')
+
         self.assertEquals("An unexpected error occurred", response.body[0:28])
         self.assertEquals(500, response.code)

@@ -49,9 +49,8 @@ class RouterHandler(BaseHandler):
 
     @tornado.web.asynchronous
     def dispatch(self):
-
         result = None
-        # the handler.request might close the connection
+        # the handler.request event might close the connection
         if self.is_finish():
             return
 

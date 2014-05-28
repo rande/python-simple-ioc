@@ -10,7 +10,6 @@ class Extension(ioc.component.Extension):
         loader = ioc.loader.YamlLoader()
         loader.load("%s/resources/config/services.yml" % path, container_builder)
 
-        container_builder.parameters.set('ioc.extra.tornado.port',               config.get('port', 8888))
         container_builder.parameters.set('ioc.extra.tornado.static_folder',      config.get('static_folder', '%project.root_folder%/resources/static'))
         container_builder.parameters.set('ioc.extra.tornado.static_public_path', config.get('static_public_path', '/static'))
 
