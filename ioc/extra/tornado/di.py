@@ -19,6 +19,7 @@ class Extension(ioc.component.Extension):
 
         definition = container_builder.get('ioc.extra.tornado.router')
         definition.add_tag('jinja2.global', {'name': 'url_for', 'method': 'generate'})
+        definition.add_tag('jinja2.global', {'name': 'path', 'method': 'generate'})
 
         definition = container_builder.get('ioc.extra.tornado.asset_helper')
         definition.add_tag('jinja2.global', {'name': 'asset', 'method': 'generate_asset'})

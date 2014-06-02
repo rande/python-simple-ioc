@@ -41,6 +41,15 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_form_data(self):
         return TornadoMultiDict(self)
 
+    def get_chunk_buffer(self):
+        return b"".join(self._write_buffer)
+
+    def is_xml_http_request(self):
+        return 'X-Requested-With' in self.request.headers and 'XMLHttpRequest' == self.request.headers['X-Requested-With']
+
+    def reset_chunk_buffer(self):
+        self._write_buffer = []
+
 class RouterHandler(BaseHandler):
     def initialize(self, router, event_dispatcher, logger=None):
         self.router = router
@@ -124,7 +133,6 @@ class RouterHandler(BaseHandler):
         })
 
     def finish(self, *args, **kwargs):
-
         result = None
         if 'result' in kwargs:
             result = kwargs['result']
