@@ -18,3 +18,11 @@ services:
             autoescape: true 
             cache_size: 200
             loader: '@ioc.extra.jinja2.loader'
+
+    ioc.extra.jinja2.extra:
+        class: ioc.extra.jinja2.helper.JinjaHelper
+        arguments:
+            - '@service_container'
+        tags:
+            jinja2.global:
+                - { name: ioc_parameter, method: get_parameter}

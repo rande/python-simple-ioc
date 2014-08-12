@@ -5,3 +5,4 @@ jinja2
 Sphinx
 tornado
 Werkzeug
+pyflaskes

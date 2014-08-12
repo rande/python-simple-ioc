@@ -1,3 +1,18 @@
+#
+# Copyright 2014 Thomas Rabaix <thomas.rabaix@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
 import ioc.loader, ioc.component, ioc.exceptions
 import os, datetime
 
@@ -15,9 +30,14 @@ class Extension(ioc.component.Extension):
                     break
 
                 if 'method' not in option:
-                    break                
+                    break
 
                 if 'priority' not in option:
                     option['priority'] = 0
 
-                dispatcher.add_listener(option['name'], getattr(container.get(id), option['method']), option['priority'])
+                if type(option['method']) == str:
+                    method = getattr(container.get(id), option['method'])
+                else:
+                    method = option['method']
+
+                dispatcher.add_listener(option['name'], method, option['priority'])
