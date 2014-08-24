@@ -59,6 +59,9 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_chunk_buffer(self):
         return b"".join(self._write_buffer)
 
+    def has_header(self, name):
+        return name in self._headers
+
     def is_xml_http_request(self):
         return 'X-Requested-With' in self.request.headers and 'XMLHttpRequest' == self.request.headers['X-Requested-With']
 
@@ -142,6 +145,9 @@ class RouterHandler(BaseHandler):
             self.finish(result=result)
 
     def prepare(self):
+        if self.logger:
+            self.logger.debug("[ioc.extra.tornado.RouterHandler] prepare request %s" % self.request.uri)
+
         self.event_dispatcher.dispatch('handler.request', {
             'request_handler': self,
             'request': self.request
@@ -152,6 +158,9 @@ class RouterHandler(BaseHandler):
         if 'result' in kwargs:
             result = kwargs['result']
 
+        if self.logger:
+            self.logger.debug("[ioc.extra.tornado.RouterHandler] finish request %s" % self.request.uri)
+
         self.event_dispatcher.dispatch('handler.response', {
             'request_handler': self,
             'request': self.request,
@@ -159,6 +168,9 @@ class RouterHandler(BaseHandler):
         })
 
         super(RouterHandler, self).finish()
+
+        if self.logger:
+            self.logger.debug("[ioc.extra.tornado.RouterHandler] terminate request %s" % self.request.uri)
 
         self.event_dispatcher.dispatch('handler.terminate', {
             'request_handler': self,
@@ -170,6 +182,9 @@ class RouterHandler(BaseHandler):
         Send a file to the client, it is a convenient method to avoid duplicated code
         """
         mime_type, encoding = mimetypes.guess_type(file)
+
+        if self.logger:
+            self.logger.debug("[ioc.extra.tornado.RouterHandler] send file %s" % file)
 
         if mime_type:
             self.set_header('Content-Type', mime_type)

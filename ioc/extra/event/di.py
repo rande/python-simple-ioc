@@ -18,7 +18,10 @@ import os, datetime
 
 class Extension(ioc.component.Extension):
     def load(self, config, container_builder):
-        container_builder.add('ioc.extra.event_dispatcher', ioc.component.Definition('ioc.event.Dispatcher'))
+        definition = ioc.component.Definition('ioc.event.Dispatcher', kwargs={
+            'logger': ioc.component.Reference('logger')
+        })
+        container_builder.add('ioc.extra.event_dispatcher', definition)
 
     def post_build(self, container_builder, container):
         dispatcher = container.get('ioc.extra.event_dispatcher')

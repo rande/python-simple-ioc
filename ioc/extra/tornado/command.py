@@ -31,7 +31,6 @@ class StartCommand(Command):
         parser.add_argument('--bind', '-b', default="localhost", type=str, help="bind the router to the provided named (default=localhost)")
 
     def execute(self, args, output):
-
         output.write("Configuring tornado (event: ioc.extra.tornado.start)\n")
 
         self.event_dispatcher.dispatch('ioc.extra.tornado.start', {

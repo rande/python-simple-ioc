@@ -35,8 +35,9 @@ class Event(object):
         return name in self.data
 
 class Dispatcher(object):
-    def __init__(self):
+    def __init__(self, logger=None):
         self.listeners = {}
+        self.logger = logger
 
     def dispatch(self, name, event=None):
         if isinstance(event, dict):
@@ -44,13 +45,22 @@ class Dispatcher(object):
 
         event = event or Event()
 
+        if self.logger:
+            self.logger.debug("event.dispatch: %s" % name)
+
         if name not in self.listeners:
             return event
 
         for listener in self.get_listeners(name):
+            if self.logger:
+                self.logger.debug("event.dispatch: %s to %s" % (name, listener))
+
             listener(event)
 
             if event.stop_propagation():
+                if self.logger:
+                    self.logger.debug("event.dispatch: %s is stopped" % name)
+
                 break
 
         return event
