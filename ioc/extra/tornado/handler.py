@@ -177,17 +177,20 @@ class RouterHandler(BaseHandler):
             'request': self.request,
         })
 
+    def send_file_header(self, file):
+        mime_type, encoding = mimetypes.guess_type(file)
+
+        if mime_type:
+            self.set_header('Content-Type', mime_type)
+
     def send_file(self, file):
         """
         Send a file to the client, it is a convenient method to avoid duplicated code
         """
-        mime_type, encoding = mimetypes.guess_type(file)
-
         if self.logger:
             self.logger.debug("[ioc.extra.tornado.RouterHandler] send file %s" % file)
 
-        if mime_type:
-            self.set_header('Content-Type', mime_type)
+        self.send_file_header(file)
 
         fp = open(file, 'rb')
         self.write(fp.read())
