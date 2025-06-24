@@ -19,16 +19,16 @@ import ioc.event
 class EventTest(unittest.TestCase):
     def test_init(self):
         event = ioc.event.Event({'foo': 'bar'})
-        self.assertEquals('bar', event.get('foo'))
+        self.assertEqual('bar', event.get('foo'))
 
         with self.assertRaises(KeyError):
-            self.assertEquals('bar', event.get('foo2'))
+            self.assertEqual('bar', event.get('foo2'))
 
         self.assertFalse(event.has('foo2'))
 
         event.set('foo2', 'bar')
         self.assertTrue(event.has('foo2'))
-        self.assertEquals('bar', event.get('foo2'))
+        self.assertEqual('bar', event.get('foo2'))
 
     def test_stop_propagation(self):
         event = ioc.event.Event()
@@ -83,6 +83,6 @@ class EventDispatcherTest(unittest.TestCase):
 
         expected = ['event32', 'event1', 'event0', 'event-1']
 
-        self.assertEquals(expected, dispatcher.get_listeners('node.load'))
+        self.assertEqual(expected, dispatcher.get_listeners('node.load'))
 
         

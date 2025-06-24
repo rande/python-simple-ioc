@@ -37,8 +37,12 @@ class YamlLoader(Loader):
 
     def load(self, file: str, container_builder: ContainerBuilder) -> None:
 
+        content = None
+        with open(file, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
         try:
-            data = yaml.load(open(file).read(), OrderedDictYAMLLoader)
+            data = yaml.load(content, OrderedDictYAMLLoader)
         except yaml.scanner.ScannerError as e:
             raise ioc.exceptions.LoadingError("file %s, \nerror: %s" % (file, e))
 

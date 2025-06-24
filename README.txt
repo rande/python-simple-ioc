@@ -18,7 +18,7 @@ Usage
 
     services:
         fake:
-            class: tests.ioc.service.Fake
+            class: tests.ioc_test.service.Fake
             arguments: 
                 - "%foo.bar%"
             kargs:
@@ -28,12 +28,12 @@ Usage
                  - [ set_ok, [ true ], {arg2: "arg"} ]
 
         foo:
-            class: tests.ioc.service.Foo
+            class: tests.ioc_test.service.Foo
             arguments: ["@fake", "#@weak_reference"]
             kargs: {}
 
         weak_reference:
-            class: tests.ioc.service.WeakReference
+            class: tests.ioc_test.service.WeakReference
 
 
 Then to use and access a service just do

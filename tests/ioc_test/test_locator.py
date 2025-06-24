@@ -30,7 +30,7 @@ class FilesystemLocatorTest(unittest.TestCase):
     def test_locate(self):
         locator = ioc.locator.FileSystemLocator(current_dir + "/../fixtures")
 
-        self.assertEquals(current_dir + "/../fixtures/services.yml", locator.locate('services.yml'))
+        self.assertEqual(current_dir + "/../fixtures/services.yml", locator.locate('services.yml'))
 
 class FunctionLocatorTest(unittest.TestCase):
     def test_locate_with_fake_path(self):
@@ -48,7 +48,7 @@ class FunctionLocatorTest(unittest.TestCase):
 
         locator = ioc.locator.FunctionLocator(function)
 
-        self.assertEquals("/mypath/services.yml", locator.locate('services.yml'))
+        self.assertEqual("/mypath/services.yml", locator.locate('services.yml'))
 
 class PrefixLocatorTest(unittest.TestCase):
     def test_locate_with_fake_path(self):
@@ -62,7 +62,7 @@ class PrefixLocatorTest(unittest.TestCase):
             "app" : ioc.locator.FileSystemLocator(current_dir + "/../fixtures")
         }, ":")
 
-        self.assertEquals(current_dir + "/../fixtures/services.yml", locator.locate('app:services.yml'))
+        self.assertEqual(current_dir + "/../fixtures/services.yml", locator.locate('app:services.yml'))
 
 class ChoiceLocatorTest(unittest.TestCase):
     def test_locate(self):
@@ -71,9 +71,9 @@ class ChoiceLocatorTest(unittest.TestCase):
             ioc.locator.FileSystemLocator(current_dir + "/../fixtures"),
         ])
 
-        self.assertEquals(current_dir + "/../fixtures/services.yml", locator.locate('services.yml'))
+        self.assertEqual(current_dir + "/../fixtures/services.yml", locator.locate('services.yml'))
 
 class PackageLocatorTest(unittest.TestCase):
     def test_locate(self):
         locator = ioc.locator.PackageLocator('tests', 'fixtures')
-        self.assertEquals(os.path.realpath(current_dir + "/../fixtures/services.yml"), locator.locate('services.yml'))
+        self.assertEqual(os.path.realpath(current_dir + "/../fixtures/services.yml"), locator.locate('services.yml'))

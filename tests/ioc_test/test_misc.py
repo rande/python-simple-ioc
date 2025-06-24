@@ -25,6 +25,7 @@ class MiscTest(unittest.TestCase):
 
     def test_true_as_key(self):
 
-        data = yaml.load(open("%s/../fixtures/order_list.yml" % current_dir).read(), OrderedDictYAMLLoader)
+        with open("%s/../fixtures/order_list.yml" % current_dir) as f:
+            data = yaml.load(f.read(), OrderedDictYAMLLoader)
 
-        self.assertEquals(data['list']['true'], 'OK')
+            self.assertEqual(data['list']['true'], 'OK')

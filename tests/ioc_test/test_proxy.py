@@ -36,12 +36,12 @@ class ProxyTest(unittest.TestCase):
 
         proxy = ioc.proxy.Proxy(container, 'fake')
 
-        self.assertEquals("method", proxy.method())
+        self.assertEqual("method", proxy.method())
 
         fake.arg = 1
 
-        self.assertEquals(1, proxy.arg)
-        self.assertEquals(42, proxy.p)
+        self.assertEqual(1, proxy.arg)
+        self.assertEqual(42, proxy.p)
 
         self.assertIsInstance(proxy, ioc.proxy.Proxy)
         self.assertIsInstance(proxy, FakeService)

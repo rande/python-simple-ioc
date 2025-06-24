@@ -57,7 +57,7 @@ and to use it:
 
     app = container.get('ioc.extra.flask.app')
 
-    __name__ == ’__main__’:
+    if __name__ == '__main__':
         app.run()
 
 Going further

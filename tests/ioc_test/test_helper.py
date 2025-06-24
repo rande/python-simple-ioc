@@ -14,6 +14,7 @@
 # under the License.
 
 import ioc
+from ioc.misc import Dict, deepcopy 
 import os
 import unittest
 
@@ -25,21 +26,21 @@ class HelperTest(unittest.TestCase):
             "%s/../fixtures/services.yml" % current_dir
         ], parameters={'inline': 'parameter'})
 
-        self.assertEquals(6, len(container.services))
-        self.assertEquals(container.get('foo').fake, container.get('fake'))
-        self.assertEquals('argument 1', container.get('fake').mandatory)
+        self.assertEqual(6, len(container.services))
+        self.assertEqual(container.get('foo').fake, container.get('fake'))
+        self.assertEqual('argument 1', container.get('fake').mandatory)
 
         self.ok = True
         self.arg2 = True
 
         fake = container.get('fake')
-        self.assertEquals(True, fake.ok)
-        self.assertEquals("arg", fake.arg2)
+        self.assertEqual(True, fake.ok)
+        self.assertEqual("arg", fake.arg2)
 
         self.assertTrue(container.get('foo').weak_reference == container.get('weak_reference'))
 
-        self.assertEquals('the argument 1', container.parameters.get('foo.foo'))
-        self.assertEquals('parameter', container.parameters.get('inline'))
+        self.assertEqual('the argument 1', container.parameters.get('foo.foo'))
+        self.assertEqual('parameter', container.parameters.get('inline'))
 
     def test_deepcopy(self):
         values = [
@@ -48,36 +49,36 @@ class HelperTest(unittest.TestCase):
         ]
 
         for value in values:
-            self.assertEquals(value, ioc.misc.deepcopy(value))
+            self.assertEqual(value, deepcopy(value))
 
 
 class DictTest(unittest.TestCase):
 
     def test_dict(self):
-        d = ioc.helper.Dict({'key': 'value'})
+        d = Dict({'key': 'value'})
 
-        self.assertEquals('value', d.get('key'))
-        self.assertEquals(None, d.get('key.fake'))
-        self.assertEquals('default', d.get('key.fake', 'default'))
+        self.assertEqual('value', d.get('key'))
+        self.assertEqual(None, d.get('key.fake'))
+        self.assertEqual('default', d.get('key.fake', 'default'))
 
-        config = ioc.helper.Dict()
+        config = Dict()
         managers = config.get_dict('managers', {'foo': 'bar'})
 
-        self.assertEquals(managers.get('foo'), 'bar')
+        self.assertEqual(managers.get('foo'), 'bar')
 
     def test_dict_iterator(self):
-        d = ioc.helper.Dict({'key': 'value'})
+        d = Dict({'key': 'value'})
 
         for key, value in d.iteritems():
-            self.assertEquals(key, 'key')
-            self.assertEquals(value, 'value')
+            self.assertEqual(key, 'key')
+            self.assertEqual(value, 'value')
 
     def test_all(self):
-        d = ioc.helper.Dict({'key': 'value'})
-        self.assertEquals(d.all(), {'key': 'value'})
+        d = Dict({'key': 'value'})
+        self.assertEqual(d.all(), {'key': 'value'})
 
-        d = ioc.helper.Dict({'key': ioc.helper.Dict({'value': 'foo'})})
-        self.assertEquals(d.all(), {'key': {'value': 'foo'}})
+        d = Dict({'key': Dict({'value': 'foo'})})
+        self.assertEqual(d.all(), {'key': {'value': 'foo'}})
 
-        d = ioc.helper.Dict({'key': ioc.helper.Dict({'value': ['foo', 'bar']})})
-        self.assertEquals(d.all(), {'key': {'value': ['foo', 'bar']}})
+        d = Dict({'key': Dict({'value': ['foo', 'bar']})})
+        self.assertEqual(d.all(), {'key': {'value': ['foo', 'bar']}})

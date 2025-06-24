@@ -43,7 +43,7 @@ Now you can create a ``services.yml`` containing services definitions:
     services:
         my.service:
             class: module.ClassName
-            arg: [arg1, @my.second.service]
+            arguments: [arg1, "@my.second.service"]
             kwargs: 
                 api_key:  '%external.service.api_key%'
                 app_name: '%app.name%'

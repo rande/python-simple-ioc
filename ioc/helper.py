@@ -18,13 +18,6 @@ import ioc.component
 import ioc.loader
 import logging
 
-# Import helper classes and functions from misc for compatibility
-from .misc import Dict, deepcopy, get_keys, is_iterable, is_scalar  # noqa: F401
-
-# Make these available at the module level
-__all__ = ['build', 'Dict', 'deepcopy', 'get_keys', 'is_iterable', 'is_scalar']
-
-
 def build(files: list[str], logger: Optional[logging.Logger] = None, parameters: Optional[dict[str, Any]] = None) -> Any:
 
     if not logger:

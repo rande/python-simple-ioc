@@ -33,7 +33,7 @@ class YamlLoaderTest(unittest.TestCase):
         loader = ioc.loader.YamlLoader()
         loader.load("%s/../fixtures/services.yml" % current_dir, builder)
 
-        self.assertEquals(5, len(builder.services))
+        self.assertEqual(5, len(builder.services))
         self.assertTrue('foo' in builder.services)
         self.assertTrue('fake' in builder.services)
 
@@ -41,18 +41,18 @@ class YamlLoaderTest(unittest.TestCase):
         self.assertIsInstance(builder.get('fake'), ioc.component.Definition)
         self.assertIsInstance(builder.get('foo').arguments[0], ioc.component.Reference)
 
-        self.assertEquals(2, len(builder.get('fake').method_calls))
+        self.assertEqual(2, len(builder.get('fake').method_calls))
 
-        self.assertEquals('set_ok', builder.get('fake').method_calls[0][0])
-        self.assertEquals([False], builder.get('fake').method_calls[0][1])
-        self.assertEquals({}, builder.get('fake').method_calls[0][2])
+        self.assertEqual('set_ok', builder.get('fake').method_calls[0][0])
+        self.assertEqual([False], builder.get('fake').method_calls[0][1])
+        self.assertEqual({}, builder.get('fake').method_calls[0][2])
 
-        self.assertEquals('set_ok', builder.get('fake').method_calls[1][0])
-        self.assertEquals([True], builder.get('fake').method_calls[1][1])
-        self.assertEquals({'arg2': 'arg'}, builder.get('fake').method_calls[1][2])
+        self.assertEqual('set_ok', builder.get('fake').method_calls[1][0])
+        self.assertEqual([True], builder.get('fake').method_calls[1][1])
+        self.assertEqual({'arg2': 'arg'}, builder.get('fake').method_calls[1][2])
 
         # test tags
-        self.assertEquals(['foo'], builder.get_ids_by_tag('jinja.filter'))
+        self.assertEqual(['foo'], builder.get_ids_by_tag('jinja.filter'))
 
     def test_reference(self):
         loader = ioc.loader.YamlLoader()
@@ -64,7 +64,7 @@ class YamlLoaderTest(unittest.TestCase):
         self.assertIsInstance(arguments[0], ioc.component.Reference)
         self.assertIsInstance(arguments[1][0], ioc.component.Reference)
         self.assertIsInstance(arguments[1][1], ioc.component.WeakReference)
-        self.assertEquals(arguments[2], 1)
+        self.assertEqual(arguments[2], 1)
 
         arguments = {'fake': '@hello', 'boo': ['@fake']}
 
@@ -73,7 +73,7 @@ class YamlLoaderTest(unittest.TestCase):
         self.assertIsInstance(arguments['fake'], ioc.component.Reference)
         self.assertIsInstance(arguments['boo'][0], ioc.component.Reference)
 
-        self.assertEquals(arguments['fake'].id, 'hello')
+        self.assertEqual(arguments['fake'].id, 'hello')
 
     def test_reference_method(self):
         builder = ioc.component.ContainerBuilder()
@@ -85,8 +85,8 @@ class YamlLoaderTest(unittest.TestCase):
 
         self.assertIsInstance(definition, ioc.component.Definition)
         self.assertIsInstance(definition.arguments[0], ioc.component.Reference)
-        self.assertEquals("fake", definition.arguments[0].id)
-        self.assertEquals("set_ok", definition.arguments[0].method)
+        self.assertEqual("fake", definition.arguments[0].id)
+        self.assertEqual("set_ok", definition.arguments[0].method)
     
     def test_abstract_service(self):
         builder = ioc.component.ContainerBuilder()

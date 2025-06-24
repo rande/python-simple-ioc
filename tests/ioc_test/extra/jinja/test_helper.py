@@ -25,6 +25,6 @@ class JinjaHelperTest(unittest.TestCase):
 
         helper = JinjaHelper(container)
 
-        self.assertEquals('world', helper.get_parameter('hello'))
-        self.assertEquals(None, helper.get_parameter('fake'))
-        self.assertEquals('for real', helper.get_parameter('fake', 'for real'))
+        self.assertEqual('world', helper.get_parameter('hello'))
+        self.assertEqual(None, helper.get_parameter('fake'))
+        self.assertEqual('for real', helper.get_parameter('fake', 'for real'))
