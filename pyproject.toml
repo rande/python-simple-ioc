@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ioc"
+version = "0.0.16"
+description = "A small dependency injection container based on Symfony2 Dependency Component"
+readme = "README.txt"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Thomas Rabaix", email = "thomas.rabaix@gmail.com"}
+]
+maintainers = [
+    {name = "Thomas Rabaix", email = "thomas.rabaix@gmail.com"}
+]
+requires-python = ">=3.6"
+dependencies = [
+    "pyyaml",
+]
+keywords = ["dependency injection", "ioc", "container", "symfony"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/rande/python-simple-ioc"
+Repository = "https://github.com/rande/python-simple-ioc"
+Issues = "https://github.com/rande/python-simple-ioc/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+]
+tornado = [
+    "tornado",
+    "werkzeug",
+]
+flask = [
+    "flask",
+    "werkzeug",
+]
+jinja2 = [
+    "jinja2",
+]
+redis = [
+    "redis",
+]
+twisted = [
+    "twisted",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["ioc*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yml", "*.yaml", "*.html"]
