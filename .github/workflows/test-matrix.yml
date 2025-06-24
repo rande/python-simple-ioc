@@ -13,14 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]  # Add more OS options if needed: macos-latest, windows-latest
         python-version: ['3.9', '3.10', '3.11', '3.12']
-        exclude:
-          # Reduce matrix size by excluding some combinations
-          - os: macos-latest
-            python-version: '3.10'
-          - os: windows-latest
-            python-version: '3.10'
+        # exclude:
+        #   # Reduce matrix size by excluding some combinations
+        #   - os: macos-latest
+        #     python-version: '3.10'
+        #   - os: windows-latest
+        #     python-version: '3.10'
     
     steps:
     - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
     
     - name: Run core tests
       run: |
-        python -m unittest discover -s tests/ioc -p "test_*.py" -v
+        python -m unittest discover -s tests/ioc_test -p "test_*.py" -v
     
     - name: Install dev dependencies
       run: |

@@ -57,7 +57,7 @@ jobs:
     - name: Run core tests (excluding extras)
       run: |
         # Run only core tests, excluding extra package tests
-        python -m unittest discover -s tests/ioc -p "test_*.py" -v 2>&1 | tee test_output.txt
+        python -m unittest discover -s tests -p "test_*.py" -v 2>&1 | grep -v "extra\." | tee test_output.txt
         
         # Check results
         if grep -q "FAILED" test_output.txt; then
@@ -242,7 +242,13 @@ jobs:
     - name: Build documentation
       run: |
         sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
-      continue-on-error: true
+    
+    - name: Upload documentation artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs/_build/html/
+      if: always()
 
   package:
     runs-on: ubuntu-latest

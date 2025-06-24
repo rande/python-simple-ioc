@@ -5,6 +5,7 @@ Add these badges to your README.md:
 ```markdown
 [![CI](https://github.com/rande/python-simple-ioc/actions/workflows/ci.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/ci.yml)
 [![Tests](https://github.com/rande/python-simple-ioc/actions/workflows/tests.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/tests.yml)
+[![Docs](https://github.com/rande/python-simple-ioc/actions/workflows/docs.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/docs.yml)
 [![Test Matrix](https://github.com/rande/python-simple-ioc/actions/workflows/test-matrix.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/test-matrix.yml)
 ```
 
@@ -19,15 +20,11 @@ Add these badges to your README.md:
 - Comprehensive test workflow with separate jobs for:
   - Linting (flake8 and optional mypy)
   - Core tests (without optional dependencies)
-  - Tests with individual extras (tornado, flask, etc.)
+  - Tests with individual extras (flask, jinja2, redis)
   - Tests with all extras installed
   - Documentation build
   - Package build and validation
 
-### test-extras.yml
-- Tests optional dependencies combinations
-- Runs weekly to catch dependency compatibility issues
-- Smart error detection that ignores expected ImportErrors
 
 ### test-matrix.yml
 - Cross-platform testing (Linux, macOS, Windows)
