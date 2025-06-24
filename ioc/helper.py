@@ -102,7 +102,7 @@ class Dict(object):
             if not isinstance(data, dict):
                 return data
 
-            for v, d in data.iteritems():
+            for v, d in data.items():
                 if isinstance(d, Dict):
                     all[v] = d.all()
                 else:
@@ -116,7 +116,7 @@ class Dict(object):
         return walk(self.data)
 
     def iteritems(self):
-        return self.data.iteritems()
+        return self.data.items()
 
     def __iter__(self):
         return iter(self.data)

@@ -108,7 +108,7 @@ class ParameterHolder(object):
 
 class ParameterResolver(object):
     def __init__(self, logger=None):
-        self.re = re.compile("%%|%([^%\s]+)%")
+        self.re = re.compile(r"%%|%([^%\s]+)%")
         self.logger = logger
         self.stack = []
 

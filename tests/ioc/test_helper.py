@@ -15,7 +15,7 @@
 
 import ioc
 import os
-import unittest2 as unittest
+import unittest
 import yaml
 
 current_dir = os.path.dirname(os.path.realpath(__file__))

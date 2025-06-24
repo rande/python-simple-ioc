@@ -14,7 +14,7 @@
 # under the License.
 
 import ioc.proxy, ioc.component
-import unittest2 as unittest
+import unittest
 
 class FakeService(object):
     p = 42

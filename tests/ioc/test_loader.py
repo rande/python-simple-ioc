@@ -15,7 +15,7 @@
 
 import os
 import ioc.loader, ioc.component
-import unittest2 as unittest
+import unittest
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 

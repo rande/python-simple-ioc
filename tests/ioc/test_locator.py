@@ -13,7 +13,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import unittest2 as unittest
+import unittest
 import ioc.locator
 import os
 

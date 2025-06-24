@@ -103,14 +103,14 @@ class RouterHandler(BaseHandler):
             if self.is_finish():
                 return
 
-        except RequestRedirect, e:
+        except RequestRedirect as e:
             if self.logger:
                 self.logger.debug("%s: redirect: %s" % (__name__, e.new_url))
 
             self.redirect(e.new_url, True, 301)
             return
 
-        except NotFound, e:
+        except NotFound as e:
             if self.logger:
                 self.logger.critical("%s: NotFound: %s" % (__name__, self.request.uri))
 
@@ -121,7 +121,7 @@ class RouterHandler(BaseHandler):
                 'request': self.request,
                 'exception': e,
             })
-        except Exception, e:
+        except Exception as e:
             self.set_status(500)
 
             import traceback
