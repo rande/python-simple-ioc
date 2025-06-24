@@ -85,19 +85,43 @@ class PackageLocator(BaseLocator):
     If the package path is not given, ``'resources'`` is assumed.
     """
 
-    def __init__(self, package_name, package_path='resources'):
-        from pkg_resources import ResourceManager, get_provider
-        self.manager = ResourceManager()
-        self.provider = get_provider(package_name)
+    def __init__(self, package_name: str, package_path: str = 'resources') -> None:
+        try:
+            # Python 3.9+
+            from importlib import resources
+            self.resources = resources
+        except ImportError:
+            # Fallback for older Python versions
+            import importlib_resources as resources
+            self.resources = resources
+        
+        self.package_name = package_name
         self.package_path = package_path
 
-    def locate(self, resource):
+    def locate(self, resource: str) -> str:
         pieces = split_resource_path(resource)
-        p = '/'.join((self.package_path,) + tuple(pieces))
-        if not self.provider.has_resource(p):
+        
+        try:
+            # Try to access the resource
+            package = self.resources.files(self.package_name)
+            if self.package_path:
+                package = package / self.package_path
+            
+            for piece in pieces:
+                package = package / piece
+            
+            if not package.is_file():
+                raise ResourceNotFound(resource)
+            
+            # For Python 3.9+, we need to handle the path properly
+            if hasattr(package, '__fspath__'):
+                return str(package)
+            else:
+                # Use as_file context manager for temporary access
+                with self.resources.as_file(package) as path:
+                    return str(path)
+        except (AttributeError, FileNotFoundError, ModuleNotFoundError):
             raise ResourceNotFound(resource)
-
-        return self.provider.get_resource_filename(self.manager, p)
 
 class FunctionLocator(BaseLocator):
     """A locator that is passed a function which does the searching.  The

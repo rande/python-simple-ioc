@@ -7,7 +7,7 @@ This directory contains the complete CI/CD setup for the python-simple-ioc proje
 ### 🚀 Main CI Workflow (`ci.yml`)
 - **Purpose**: Primary continuous integration for every push and PR
 - **Features**:
-  - Tests against Python 3.9, 3.10, 3.11, and 3.12
+  - Tests against Python 3.9, 3.10, 3.11, 3.12, and 3.13
   - Runs flake8 linting (required to pass)
   - Executes core tests using smart dependency detection
   - Optional mypy type checking (non-blocking)
@@ -28,12 +28,6 @@ This directory contains the complete CI/CD setup for the python-simple-ioc proje
 - **Focus**: Core functionality verification
 
 
-### 📚 Documentation (`docs.yml`)
-- **Purpose**: Build and deploy documentation to GitHub Pages
-- **Features**:
-  - Builds Sphinx documentation with warnings as errors
-  - Deploys to GitHub Pages on push to main/master
-  - Uses proper GitHub Pages permissions and concurrency
 
 ### 🏷️ Release Automation (`release.yml`)
 - **Purpose**: Automated package building and PyPI publishing
@@ -75,10 +69,6 @@ Add these to your GitHub repository settings:
 - `PYPI_API_TOKEN`: Your PyPI API token for publishing releases
 - `TEST_PYPI_API_TOKEN`: Your Test PyPI API token for testing
 
-### GitHub Pages Setup
-1. Go to repository Settings → Pages
-2. Select "GitHub Actions" as the source
-3. The `docs.yml` workflow will automatically deploy documentation
 
 ### Branch Protection
 Consider setting up branch protection rules for `main`/`master`:

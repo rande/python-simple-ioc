@@ -5,7 +5,6 @@ Add these badges to your README.md:
 ```markdown
 [![CI](https://github.com/rande/python-simple-ioc/actions/workflows/ci.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/ci.yml)
 [![Tests](https://github.com/rande/python-simple-ioc/actions/workflows/tests.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/tests.yml)
-[![Docs](https://github.com/rande/python-simple-ioc/actions/workflows/docs.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/docs.yml)
 [![Test Matrix](https://github.com/rande/python-simple-ioc/actions/workflows/test-matrix.yml/badge.svg)](https://github.com/rande/python-simple-ioc/actions/workflows/test-matrix.yml)
 ```
 
@@ -14,7 +13,7 @@ Add these badges to your README.md:
 ### ci.yml
 - Main CI workflow that runs on every push and PR
 - Runs flake8 linting and the standard test suite
-- Tests against Python 3.9, 3.10, 3.11, and 3.12
+- Tests against Python 3.9, 3.10, 3.11, 3.12, and 3.13
 
 ### tests.yml
 - Comprehensive test workflow with separate jobs for:
