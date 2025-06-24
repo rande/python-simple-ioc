@@ -13,12 +13,19 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-class JinjaHelper(object):
-    def __init__(self, container):
-        self.container = container
+from ioc.misc import OrderedDictYAMLLoader
 
-    def get_parameter(self, name, default=None):
-        if self.container.parameters.has(name):
-            return self.container.parameters.get(name)
+import unittest
+import os
+import yaml
 
-        return default
+current_dir = os.path.dirname(os.path.realpath(__file__))
+
+class MiscTest(unittest.TestCase):
+
+    def test_true_as_key(self):
+
+        with open("%s/../fixtures/order_list.yml" % current_dir) as f:
+            data = yaml.load(f.read(), OrderedDictYAMLLoader)
+
+            self.assertEqual(data['list']['true'], 'OK')

@@ -13,12 +13,21 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-class JinjaHelper(object):
-    def __init__(self, container):
-        self.container = container
+class Fake(object):
+    def __init__(self, mandatory, param=None):
+        self.mandatory = mandatory
+        self.param = param
+        self.ok = True
+        self.arg2 = True
 
-    def get_parameter(self, name, default=None):
-        if self.container.parameters.has(name):
-            return self.container.parameters.get(name)
+    def set_ok(self, ok, arg2=None):
+        self.arg2 = arg2
+        self.ok = ok
 
-        return default
+class Foo(object):
+    def __init__(self, fake, weak_reference):
+        self.fake = fake
+        self.weak_reference = weak_reference
+
+class WeakReference(object):
+    pass

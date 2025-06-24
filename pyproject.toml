@@ -1,0 +1,110 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ioc"
+version = "0.0.16"
+description = "A small dependency injection container based on Symfony2 Dependency Component"
+readme = "README.txt"
+license = "Apache-2.0"
+authors = [
+    {name = "Thomas Rabaix", email = "thomas.rabaix@gmail.com"}
+]
+maintainers = [
+    {name = "Thomas Rabaix", email = "thomas.rabaix@gmail.com"}
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pyyaml",
+]
+keywords = ["dependency injection", "ioc", "container", "symfony"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/rande/python-simple-ioc"
+Repository = "https://github.com/rande/python-simple-ioc"
+Issues = "https://github.com/rande/python-simple-ioc/issues"
+
+[project.optional-dependencies]
+dev = [
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "build>=0.10.0",
+    "twine>=4.0.0",
+]
+test = [
+    "pytest>=6.0",
+]
+tornado = [
+    "tornado",
+    "werkzeug",
+]
+flask = [
+    "flask",
+    "werkzeug",
+]
+jinja2 = [
+    "jinja2",
+]
+redis = [
+    "redis",
+]
+twisted = [
+    "twisted",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["ioc*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yml", "*.yaml", "*.html"]
+
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+disallow_untyped_decorators = false
+no_implicit_optional = false
+warn_redundant_casts = false
+warn_unused_ignores = false
+warn_no_return = false
+warn_unreachable = false
+strict_equality = false
+ignore_errors = false
+
+[[tool.mypy.overrides]]
+module = [
+    "yaml.*",
+    "werkzeug.*",
+    "element.*",
+    "tornado.*",
+    "redis.*",
+    "jinja2.*",
+    "flask.*",
+    "importlib_resources.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "ioc.extra.*"
+ignore_errors = true

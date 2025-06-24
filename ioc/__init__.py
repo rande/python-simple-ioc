@@ -14,4 +14,9 @@
 # under the License.
 
 
+# Import the build function directly
 from ioc.helper import build
+
+__all__ = [
+    'build',
+]

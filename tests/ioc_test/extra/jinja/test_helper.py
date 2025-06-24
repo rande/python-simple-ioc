@@ -13,12 +13,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-class JinjaHelper(object):
-    def __init__(self, container):
-        self.container = container
+import unittest
 
-    def get_parameter(self, name, default=None):
-        if self.container.parameters.has(name):
-            return self.container.parameters.get(name)
+from ioc.extra.jinja2.helper import JinjaHelper
+from ioc.component import Container
+class JinjaHelperTest(unittest.TestCase):
+    def test_get_parameter(self):
 
-        return default
+        container = Container()
+        container.parameters.set('hello', 'world')
+
+        helper = JinjaHelper(container)
+
+        self.assertEqual('world', helper.get_parameter('hello'))
+        self.assertEqual(None, helper.get_parameter('fake'))
+        self.assertEqual('for real', helper.get_parameter('fake', 'for real'))

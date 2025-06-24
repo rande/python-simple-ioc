@@ -23,11 +23,11 @@ class Extension(ioc.component.Extension):
         locator_map = {}
 
         for extension in extensions:
-            locator_map[extension] = Definition('ioc.locator.ChoiceLocator', 
-                arguments=[[
-                    Definition('ioc.locator.FileSystemLocator', arguments=["%s/resources/%s" % (container_builder.parameters.get('project.root_folder'), extension)]),
-                    Definition('ioc.locator.PackageLocator', arguments=[extension], kwargs={'package_path': 'resources'})
-                ]]
-            )
+            arguments = [[
+                Definition('ioc.locator.FileSystemLocator', arguments=["%s/resources/%s" % (container_builder.parameters.get('project.root_folder'), extension)]),
+                Definition('ioc.locator.PackageLocator', arguments=[extension], kwargs={'package_path': 'resources'})
+            ]]
+            
+            locator_map[extension] = Definition('ioc.locator.ChoiceLocator', arguments=arguments)
 
         container_builder.add('ioc.locator', Definition('ioc.locator.PrefixLocator', arguments=[locator_map], kwargs={'delimiter': ':'}))

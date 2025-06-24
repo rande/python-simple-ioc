@@ -13,29 +13,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import ioc.exceptions, ioc.helper
-from ioc.proxy import Proxy
+from typing import Any, Optional, Union
+from .exceptions import UnknownService, ParameterHolderIsFrozen, UnknownParameter, RecursiveParameterResolutionError, AbstractDefinitionInitialization, CyclicReference
+from .proxy import Proxy
+from .misc import deepcopy, get_keys, is_iterable
 
-import importlib, inspect, re
-
-class Extension(object):
-    def load(self, config, container_builder):
-        pass
-
-    def post_load(self, container_builder):
-        pass
-
-    def pre_build(self, container_builder, container):
-        pass
-
-    def post_build(self, container_builder, container):
-        pass
-
-    def start(self, container):
-        pass
+import importlib, inspect, re, logging
 
 class Reference(object):
-    def __init__(self, id, method=None):
+    def __init__(self, id: str, method: Optional[str] = None) -> None:
         self.id = id
         self.method = method
 
@@ -43,85 +29,88 @@ class WeakReference(Reference):
     pass
 
 class Definition(object):
-    def __init__(self, clazz=None, arguments=None, kwargs=None, abstract=False):
+    def __init__(self, clazz: Optional[Union[str, list[str]]] = None, arguments: Optional[list[Any]] = None, kwargs: Optional[dict[str, Any]] = None, abstract: bool = False) -> None:
         self.clazz = clazz
         self.arguments = arguments or [] 
         self.kwargs = kwargs or {}
-        self.method_calls = []
-        self.property_calls = []
-        self.tags = {}
+        self.method_calls: list[list[Any]] = []
+        self.property_calls: list[Any] = []
+        self.tags: dict[str, list[dict[str, Any]]] = {}
         self.abstract = abstract
 
-    def add_call(self, method, arguments=None, kwargs=None):
+    def add_call(self, method: str, arguments: Optional[list[Any]] = None, kwargs: Optional[dict[str, Any]] = None) -> None:
         self.method_calls.append([
             method,
             arguments or [],
             kwargs or {}
         ])
 
-    def add_tag(self, name, options=None):
+    def add_tag(self, name: str, options: Optional[dict[str, Any]] = None) -> None:
         if name not in self.tags:
             self.tags[name] = []
 
         self.tags[name].append(options or {})
 
-    def has_tag(self, name):
+    def has_tag(self, name: str) -> bool:
         return name in self.tags
 
-    def get_tag(self, name):
+    def get_tag(self, name: str) -> list[dict[str, Any]]:
         if not self.has_tag(name):
             return []
 
         return self.tags[name]
 
 class ParameterHolder(object):
-    def __init__(self, parameters=None):
+    def __init__(self, parameters: Optional[dict[str, Any]] = None) -> None:
         self._parameters = parameters or {}
         self._frozen = False
 
-    def set(self, key, value):
+    def set(self, key: str, value: Any) -> None:
         if self._frozen:
-            raise ioc.exceptions.ParameterHolderIsFrozen(key)
+            raise ParameterHolderIsFrozen(key)
 
         self._parameters[key] = value
 
-    def get(self, key):
+    def get(self, key: str) -> Any:
         if key in self._parameters:
             return self._parameters[key]
 
-        raise ioc.exceptions.UnknownParameter(key)
+        raise UnknownParameter(key)
 
-    def remove(self, key):
+    def remove(self, key: str) -> None:
         del self._parameters[key]
 
-    def has(self, key):
+    def has(self, key: str) -> bool:
         return key in self._parameters
 
-    def all(self):
+    def all(self) -> dict[str, Any]:
         return self._parameters
 
-    def freeze(self):
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.set(key, value)
+
+    def freeze(self) -> None:
         self._frozen = True
 
-    def is_frozen(self):
+    def is_frozen(self) -> bool:
         return self._frozen == True
 
 class ParameterResolver(object):
-    def __init__(self, logger=None):
-        self.re = re.compile("%%|%([^%\s]+)%")
+    def __init__(self, logger: Optional[logging.Logger] = None) -> None:
+        self.re = re.compile(r"%%|%([^%\s]+)%")
         self.logger = logger
-        self.stack = []
+        self.stack: list[str] = []
 
-    def _resolve(self, parameter, parameter_holder):
+    def _resolve(self, parameter: Any, parameter_holder: ParameterHolder) -> Any:
         if isinstance(parameter, (tuple)):
             parameter = list(parameter)
-            for key in ioc.helper.get_keys(parameter):
+            for key in get_keys(parameter):
                 parameter[key] = self.resolve(parameter[key], parameter_holder)
 
             return tuple(parameter)
 
-        if ioc.helper.is_iterable(parameter):
-            for key in ioc.helper.get_keys(parameter):
+        if is_iterable(parameter):
+            for key in get_keys(parameter):
                 parameter[key] = self.resolve(parameter[key], parameter_holder)
 
             return parameter
@@ -149,11 +138,11 @@ class ParameterResolver(object):
         # print parameter
         return parameter
 
-    def resolve(self, parameter, parameter_holder):
+    def resolve(self, parameter: Any, parameter_holder: ParameterHolder) -> Any:
         if parameter in self.stack:
-            raise ioc.exceptions.RecursiveParameterResolutionError(" -> ".join(self.stack) + " -> " + parameter)
+            raise RecursiveParameterResolutionError(" -> ".join(self.stack) + " -> " + parameter)
 
-        parameter = ioc.helper.deepcopy(parameter)
+        parameter = deepcopy(parameter)
 
         self.stack.append(parameter)
         value = self._resolve(parameter, parameter_holder)
@@ -162,39 +151,39 @@ class ParameterResolver(object):
         return value
 
 class Container(object):
-    def __init__(self):
-        self.services = {}
+    def __init__(self) -> None:
+        self.services: dict[str, Any] = {}
         self.parameters = ParameterHolder()
-        self.stack = []
+        self.stack: list[str] = []
 
-    def has(self, id):
+    def has(self, id: str) -> bool:
         return id in self.services
 
-    def add(self, id, service):
+    def add(self, id: str, service: Any) -> None:
         self.services[id] = service
 
-    def get(self, id):
+    def get(self, id: str) -> Any:
         if id not in self.services:
-            raise ioc.exceptions.UnknownService(id)
+            raise UnknownService(id)
 
         return self.services[id]
 
 class ContainerBuilder(Container):
-    def __init__(self, logger=None):
-        self.services = {}
+    def __init__(self, logger: Optional[logging.Logger] = None) -> None:
+        self.services: dict[str, Definition] = {}
         self.parameters = ParameterHolder()
-        self.stack = []
+        self.stack: list[str] = []
         self.logger = logger
-        self.parameter_resolver = ioc.component.ParameterResolver(logger=logger)
-        self.extensions = {}
+        self.parameter_resolver = ParameterResolver(logger=logger)
+        self.extensions: dict[str, Any] = {}
 
-    def add_extension(self, name, config):
+    def add_extension(self, name: str, config: Any) -> None:
         self.extensions[name] = config
 
-    def get_ids_by_tag(self, name):
+    def get_ids_by_tag(self, name: str) -> list[str]:
         return [id for id, definition in self.services.items() if definition.has_tag(name)]
 
-    def build_container(self, container):
+    def build_container(self, container: Container) -> Container:
         if self.logger:
             self.logger.debug("Start building the container")
 
@@ -207,7 +196,6 @@ class ContainerBuilder(Container):
                 container.add("logger", logging.getLogger('app'))
             else:
                 container.add("logger", self.logger)
-
 
         self.parameters.set('ioc.extensions', self.extensions.keys())
 
@@ -225,6 +213,18 @@ class ContainerBuilder(Container):
         for extension in extensions:
             extension.post_load(self)
 
+        if self.logger:
+            self.logger.debug("Starting resolving all parameters!")
+            
+        for name, value in self.parameters.all().items():
+            container.parameters.set(
+                name, 
+                self.parameter_resolver.resolve(value, self.parameters)
+            )
+
+        if self.logger:
+            self.logger.debug("End resolving all parameters!")
+
         for extension in extensions:
             extension.pre_build(self, container)
 
@@ -240,16 +240,6 @@ class ContainerBuilder(Container):
 
         if self.logger:
             self.logger.debug("Building container is over!")
-            self.logger.debug("Starting resolving all parameters!")
-
-        for name, value in self.parameters.all().items():
-            container.parameters.set(
-                name, 
-                self.parameter_resolver.resolve(value, self.parameters)
-            )
-
-        if self.logger:
-            self.logger.debug("End resolving all parameters!")
 
         if container.has('ioc.extra.event_dispatcher'):
             container.get('ioc.extra.event_dispatcher').dispatch('ioc.container.built', {
@@ -262,23 +252,23 @@ class ContainerBuilder(Container):
 
         return container
 
-    def create_definition(self, id):
+    def create_definition(self, id: str) -> Definition:
         abstract = self.services[id]
 
         definition = Definition(
             clazz=abstract.clazz, 
-            arguments=ioc.helper.deepcopy(abstract.arguments),
-            kwargs=ioc.helper.deepcopy(abstract.kwargs),
+            arguments=deepcopy(abstract.arguments),
+            kwargs=deepcopy(abstract.kwargs),
             abstract=False,
         )
 
-        definition.method_calls = ioc.helper.deepcopy(abstract.method_calls)
-        definition.property_calls = ioc.helper.deepcopy(abstract.property_calls)
-        definition.tags = ioc.helper.deepcopy(abstract.tags)
+        definition.method_calls = deepcopy(abstract.method_calls)
+        definition.property_calls = deepcopy(abstract.property_calls)
+        definition.tags = deepcopy(abstract.tags)
 
         return definition
 
-    def get_class(self, definition):
+    def get_class(self, definition: Definition) -> Any:
         clazz = self.parameter_resolver.resolve(definition.clazz, self.parameters)
 
         if isinstance(clazz, list):
@@ -298,7 +288,7 @@ class ContainerBuilder(Container):
 
         return clazz
 
-    def get_instance(self, definition, container):
+    def get_instance(self, definition: Definition, container: Container) -> Any:
 
         klass = self.get_class(definition)
 
@@ -333,9 +323,9 @@ class ContainerBuilder(Container):
 
         return instance
 
-    def get_service(self, id, definition, container):
+    def get_service(self, id: str, definition: Definition, container: Container) -> Any:
         if definition.abstract:
-            raise ioc.exceptions.AbstractDefinitionInitialization("The ContainerBuiler try to build an abstract definition, id=%s, class=%s" % (id, definition.clazz))
+            raise AbstractDefinitionInitialization("The ContainerBuiler try to build an abstract definition, id=%s, class=%s" % (id, definition.clazz))
 
         if container.has(id):
             return container.get(id)
@@ -344,7 +334,7 @@ class ContainerBuilder(Container):
             if self.logger:
                 self.logger.error("ioc.exceptions.CyclicReference: " + " -> ".join(self.stack) + " -> " + id)
 
-            raise ioc.exceptions.CyclicReference(" -> ".join(self.stack) + " -> " + id)
+            raise CyclicReference(" -> ".join(self.stack) + " -> " + id)
 
         self.stack.append(id)
         instance = self.get_instance(definition, container)
@@ -353,9 +343,9 @@ class ContainerBuilder(Container):
 
         return instance
 
-    def retrieve_service(self, value, container):
+    def retrieve_service(self, value: Any, container: Container) -> Any:
         if isinstance(value, (Reference, WeakReference)) and not container.has(value.id) and not self.has(value.id):
-            raise ioc.exceptions.UnknownService(value.id)
+            raise UnknownService(value.id)
 
         if isinstance(value, (Reference)):
             if not container.has(value.id):
@@ -379,7 +369,7 @@ class ContainerBuilder(Container):
         if isinstance(value, Definition):
             return self.get_instance(value, container)
 
-        if ioc.helper.is_iterable(value):
+        if is_iterable(value):
             return self.set_services(value, container)
 
         if isinstance(value, (tuple)):
@@ -387,8 +377,24 @@ class ContainerBuilder(Container):
 
         return self.parameter_resolver.resolve(value, self.parameters)
 
-    def set_services(self, arguments, container):
-        for pos in ioc.helper.get_keys(arguments):
+    def set_services(self, arguments: Union[list[Any], dict[str, Any]], container: Container) -> Union[list[Any], dict[str, Any]]:
+        for pos in get_keys(arguments):
             arguments[pos] = self.retrieve_service(arguments[pos], container)
 
         return arguments
+
+class Extension(object):
+    def load(self, config: Any, container_builder: ContainerBuilder) -> None:
+        pass
+
+    def post_load(self, container_builder: ContainerBuilder) -> None:
+        pass
+
+    def pre_build(self, container_builder: ContainerBuilder, container: Container) -> None:
+        pass
+
+    def post_build(self, container_builder: ContainerBuilder, container: Container) -> None:
+        pass
+
+    def start(self, container: Container) -> None:
+        pass

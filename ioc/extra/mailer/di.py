@@ -13,16 +13,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import ioc.loader, ioc.component, ioc.exceptions
-import os, datetime
+from ioc.component import Definition, Extension
 
 import mailer
 
 class ExtraMailer(mailer.Mailer):
     def create(self, **kwargs):
         return mailer.Message(**kwargs)
-        
-class Extension(ioc.component.Extension):
+
+class Extension(Extension):
     def load(self, config, container_builder):
         kwargs = {
             'host': config.get('host', "localhost"),
@@ -33,5 +32,4 @@ class Extension(ioc.component.Extension):
             # 'use_ssl': config.get('use_ssl', False),
         }
 
-        container_builder.add('ioc.extra.mailer', ioc.component.Definition('ioc.extra.mailer.di.ExtraMailer', kwargs=kwargs))
-
+        container_builder.add('ioc.extra.mailer', Definition('ioc.extra.mailer.di.ExtraMailer', kwargs=kwargs))

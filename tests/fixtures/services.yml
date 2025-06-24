@@ -1,11 +1,11 @@
 parameters:
     foo.bar: argument 1
     foo.foo: "the %foo.bar%"
-    foo.class: "tests.ioc.service.Foo"
+    foo.class: "tests.ioc_test.service.Foo"
 
 services:
     fake:
-        class: tests.ioc.service.Fake
+        class: tests.ioc_test.service.Fake
         arguments: 
             - "%foo.bar%"
         kargs:
@@ -23,13 +23,13 @@ services:
                 - []
 
     weak_reference:
-        class: tests.ioc.service.WeakReference
+        class: tests.ioc_test.service.WeakReference
 
     method_reference:
-        class: tests.ioc.service.Fake
+        class: tests.ioc_test.service.Fake
         arguments:
             - "@fake#set_ok"
 
     abstract_service:
-        class: tests.ioc.service.Fake
+        class: tests.ioc_test.service.Fake
         abstract: true

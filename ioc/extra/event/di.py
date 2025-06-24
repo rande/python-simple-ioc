@@ -13,8 +13,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import ioc.loader, ioc.component, ioc.exceptions
-import os, datetime
+import ioc.component
 
 class Extension(ioc.component.Extension):
     def load(self, config, container_builder):
