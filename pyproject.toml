@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ioc"
 version = "0.0.16"
 description = "A small dependency injection container based on Symfony2 Dependency Component"
-readme = "README.txt"
+readme = "README.md"
 license = "Apache-2.0"
 authors = [
     {name = "Thomas Rabaix", email = "thomas.rabaix@gmail.com"}
