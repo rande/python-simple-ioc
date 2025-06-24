@@ -14,4 +14,15 @@
 # under the License.
 
 
+# Import the build function directly
 from ioc.helper import build
+
+# Make helper and misc modules available
+# def __getattr__(name):
+#     if name == 'helper':
+#         from ioc import helper
+#         return helper
+#     elif name == 'misc':
+#         from ioc import misc  
+#         return misc
+#     raise AttributeError(f"module 'ioc' has no attribute '{name}'")

@@ -13,7 +13,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import argparse, sys
+import argparse
 
 class Command(object):
 
@@ -22,7 +22,6 @@ class Command(object):
 
     def execute(self, args, output):
         pass
-
 
 class CommandManager(object):
     def __init__(self, commands=None):
@@ -41,9 +40,9 @@ class CommandManager(object):
         self.commands[name] = (parser, command)
 
     def execute(self, argv, stdout):
-        argv.pop(0) # remove the script name
+        argv.pop(0)  # remove the script name
 
-        if len(argv) == 0: # no argument
+        if len(argv) == 0:  # no argument
             name = 'help'
             argv = []
         else:
@@ -58,8 +57,8 @@ class CommandManager(object):
 
         r = command.execute(arguments, stdout)
 
-        if r == None:
-           r = 0
+        if r is None:
+            r = 0
 
         return r
 
@@ -73,7 +72,6 @@ class HelpCommand(Command):
         pass
 
     def execute(self, args, output):
-        
         output.write("Commands available: \n")
         for name, (parser, command) in self.command_manager.commands.items():
             output.write(" > % -20s : %s \n" % (name, parser.description))

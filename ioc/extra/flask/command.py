@@ -33,7 +33,7 @@ class StartCommand(Command):
             'port': args.port,
         }
 
-        ## flask autoreload cannot read from arguments line
+        # flask autoreload cannot read from arguments line
         if args.debug:
             options['debug'] = True
             options['use_reloader'] = False

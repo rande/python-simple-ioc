@@ -16,7 +16,7 @@
 import unittest
 
 from ioc.extra.jinja2.helper import JinjaHelper
-from ioc.component import Container, ParameterHolder
+from ioc.component import Container
 class JinjaHelperTest(unittest.TestCase):
     def test_get_parameter(self):
 

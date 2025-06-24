@@ -13,33 +13,36 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from typing import Any, Callable, Optional, Union
+import logging
+
 class Event(object):
     _propagation_stopped = False
 
-    def __init__(self, data=None):
+    def __init__(self, data: Optional[dict[str, Any]] = None) -> None:
         self.data = data or {}
 
-    def stop_propagation(self):
+    def stop_propagation(self) -> None:
         self._propagation_stopped = True
 
-    def is_propagation_stop(self):
+    def is_propagation_stop(self) -> bool:
         return self._propagation_stopped
 
-    def get(self, name):
+    def get(self, name: str) -> Any:
         return self.data[name]
 
-    def set(self, name, value):
+    def set(self, name: str, value: Any) -> None:
         self.data[name] = value
 
-    def has(self, name):
+    def has(self, name: str) -> bool:
         return name in self.data
 
 class Dispatcher(object):
-    def __init__(self, logger=None):
-        self.listeners = {}
+    def __init__(self, logger: Optional[logging.Logger] = None) -> None:
+        self.listeners: dict[str, list[Callable]] = {}
         self.logger = logger
 
-    def dispatch(self, name, event=None):
+    def dispatch(self, name: str, event: Optional[Union[Event, dict[str, Any]]] = None) -> Event:
         if isinstance(event, dict):
             event = Event(event)
 
@@ -65,13 +68,13 @@ class Dispatcher(object):
 
         return event
 
-    def get_listeners(self, name):
+    def get_listeners(self, name: str) -> list[Callable]:
         """
         Return the callables related to name
         """        
         return list(map(lambda listener: listener[0], self.listeners[name]))
 
-    def add_listener(self, name, listener, priority=0):
+    def add_listener(self, name: str, listener: Callable, priority: int = 0) -> None:
         """
         Add a new listener to the dispatch
         """
@@ -83,12 +86,12 @@ class Dispatcher(object):
         # reorder event
         self.listeners[name].sort(key=lambda listener: listener[1], reverse=True)
 
-    def remove_listener(self, name, listener):
+    def remove_listener(self, name: str, listener: Callable) -> None:
         if name not in self.listeners:
             return
 
         self.listeners[name] = [item for item in self.listeners[name] if item != listener]
 
-    def remove_listeners(self, name):
+    def remove_listeners(self, name: str) -> None:
         if name in self.listeners:
             self.listeners[name] = []

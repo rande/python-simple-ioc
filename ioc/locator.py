@@ -23,7 +23,7 @@ from os import path
 class ResourceNotFound(Exception):
     pass
 
-def split_resource_path(resource):
+def split_resource_path(resource: str) -> list[str]:
     """Split a path into segments and perform a sanity check.  If it detects
     '..' in the path it will raise a `TemplateNotFound` error.
     """
@@ -39,7 +39,7 @@ def split_resource_path(resource):
 
 
 class BaseLocator(object):
-    def locate(self, resource):
+    def locate(self, resource: str) -> str:
         raise ResourceNotFound(resource)
 
 
@@ -57,13 +57,8 @@ class FileSystemLocator(BaseLocator):
     """
 
     def __init__(self, searchpath):
-        
-        try:
-            if isinstance(searchpath, basestring):
-                searchpath = [searchpath]
-        except NameError:
-            if isinstance(searchpath, str):
-                searchpath = [searchpath]
+        if isinstance(searchpath, str):
+            searchpath = [searchpath]
 
         self.searchpath = list(searchpath)
 
@@ -183,4 +178,3 @@ class ChoiceLocator(BaseLocator):
                 pass
 
         raise ResourceNotFound(resource)
-

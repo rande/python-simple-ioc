@@ -60,4 +60,3 @@ class Extension(ioc.component.Extension):
             }))
 
             manager.add_call('add_client', arguments=[name, ioc.component.Reference(id)])
-

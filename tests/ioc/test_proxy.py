@@ -18,6 +18,7 @@ import unittest
 
 class FakeService(object):
     p = 42
+
     def __init__(self):
         self.arg = None
 

@@ -96,4 +96,3 @@ class YamlLoaderTest(unittest.TestCase):
 
         self.assertTrue(builder.get('abstract_service').abstract)
         self.assertFalse(builder.get('fake').abstract)
-

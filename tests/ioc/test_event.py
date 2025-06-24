@@ -30,7 +30,6 @@ class EventTest(unittest.TestCase):
         self.assertTrue(event.has('foo2'))
         self.assertEquals('bar', event.get('foo2'))
 
-
     def test_stop_propagation(self):
         event = ioc.event.Event()
 
@@ -43,7 +42,7 @@ def mylistener(event):
 
 class EventDispatcherTest(unittest.TestCase):
     def test_init(self):
-        dispatcher = ioc.event.Dispatcher()
+        ioc.event.Dispatcher()
 
     def test_listener(self):
         dispatcher = ioc.event.Dispatcher()

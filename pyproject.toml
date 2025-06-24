@@ -14,7 +14,7 @@ authors = [
 maintainers = [
     {name = "Thomas Rabaix", email = "thomas.rabaix@gmail.com"}
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.9"
 dependencies = [
     "pyyaml",
 ]
@@ -25,9 +25,6 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -43,6 +40,12 @@ Issues = "https://github.com/rande/python-simple-ioc/issues"
 
 [project.optional-dependencies]
 dev = [
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "build>=0.10.0",
+    "twine>=4.0.0",
+]
+test = [
     "pytest>=6.0",
 ]
 tornado = [
@@ -71,3 +74,37 @@ include = ["ioc*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yml", "*.yaml", "*.html"]
+
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+disallow_untyped_decorators = false
+no_implicit_optional = false
+warn_redundant_casts = false
+warn_unused_ignores = false
+warn_no_return = false
+warn_unreachable = false
+strict_equality = false
+ignore_errors = false
+
+[[tool.mypy.overrides]]
+module = [
+    "yaml.*",
+    "werkzeug.*",
+    "pkg_resources.*",
+    "element.*",
+    "tornado.*",
+    "redis.*",
+    "jinja2.*",
+    "flask.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "ioc.extra.*"
+ignore_errors = true

@@ -59,7 +59,7 @@ class ParameterHolderTest(unittest.TestCase):
         
 class ParameterResolverTest(unittest.TestCase):
     def test_init(self):
-        parameter_resolver = ioc.component.ParameterResolver()
+        ioc.component.ParameterResolver()
 
     def test_parameters(self):
         holder = ioc.component.ParameterHolder()
@@ -72,7 +72,7 @@ class ParameterResolverTest(unittest.TestCase):
         self.assertEquals("hello world", parameter_resolver.resolve("%bonjour% %le_monde%", holder))
         self.assertEquals(['hello world', 'hello world'], parameter_resolver.resolve(["%bonjour% %le_monde%", "%bonjour% %le_monde%"], holder))        
 
-    def test_parameters(self):
+    def test_parameter_types(self):
         holder = ioc.component.ParameterHolder()
         parameter_resolver = ioc.component.ParameterResolver()
         
@@ -141,7 +141,7 @@ class ContainerTest(unittest.TestCase):
         self.container.add('myid', {})
         self.container.add('myid.2', {})
 
-        self.assertEquals(2, len(self.container.services));
+        self.assertEquals(2, len(self.container.services))
 
     def test_get(self):
         self.container.add('myid', {})
@@ -163,7 +163,6 @@ class ContainerBuilderTest(unittest.TestCase):
         c = self.container.get_class(definition)
         
         self.assertEquals(c.__name__, tests.ioc.service.Fake.__name__)
-
 
     def test_get_instance(self):
         definition = ioc.component.Definition('tests.ioc.service.Fake', [True], {'param': 'salut'})
@@ -225,7 +224,7 @@ class ContainerBuilderTest(unittest.TestCase):
         self.assertIsInstance(container.get('foo').mandatory.mandatory, tests.ioc.service.Fake)
         
     def test_reference_with_method(self):
-        self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Fake', [ioc.component.Reference('service.id.2','set_ok')]))
+        self.container.add('service.id.1', ioc.component.Definition('tests.ioc.service.Fake', [ioc.component.Reference('service.id.2', 'set_ok')]))
         self.container.add('service.id.2', ioc.component.Definition('tests.ioc.service.Fake', ['foo']))
 
         container = ioc.component.Container()

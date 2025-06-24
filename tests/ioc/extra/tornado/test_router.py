@@ -15,9 +15,7 @@
 
 import unittest
 
-from ioc.extra.tornado.router import Router, TornadoMultiDict
-from tornado.httpserver import HTTPRequest
-import wtforms
+from ioc.extra.tornado.router import Router
 
 def view():
     return "hello"

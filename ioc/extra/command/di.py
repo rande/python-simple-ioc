@@ -34,4 +34,3 @@ class Extension(ioc.component.Extension):
                     break
 
                 command_manager.add_command(option['name'], container.get(id))
-

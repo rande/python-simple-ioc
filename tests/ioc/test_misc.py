@@ -15,7 +15,6 @@
 
 from ioc.misc import OrderedDictYAMLLoader
 
-import ioc.proxy, ioc.component
 import unittest
 import os
 import yaml

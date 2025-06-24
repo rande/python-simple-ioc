@@ -72,14 +72,13 @@ class Router(object):
         self._view_functions = {}
         self._adapter = None
 
-
     def add(self, name, pattern, view_func, defaults=None, subdomain=None, methods=None,
-                 build_only=False, strict_slashes=None,
-                 redirect_to=None, alias=False, host=None):
+            build_only=False, strict_slashes=None,
+            redirect_to=None, alias=False, host=None):
 
         self._url_map.add(Rule(pattern, endpoint=name, defaults=defaults, subdomain=subdomain, methods=methods,
-                              build_only=build_only, strict_slashes=strict_slashes, redirect_to=redirect_to,
-                              alias=alias, host=host))
+                               build_only=build_only, strict_slashes=strict_slashes, redirect_to=redirect_to,
+                               alias=alias, host=host))
 
         self._view_functions[name] = view_func
 

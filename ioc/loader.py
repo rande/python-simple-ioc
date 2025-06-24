@@ -13,14 +13,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import yaml, collections
+from typing import Any, Union
+import yaml
 
-from ioc.component import Definition, Reference, WeakReference
-import ioc.helper, ioc.exceptions
+from ioc.component import Definition, Reference, WeakReference, ContainerBuilder
+import ioc.helper
+import ioc.exceptions
+from . import misc
+
 from .misc import OrderedDictYAMLLoader
 
 class Loader(object):
-    def fix_config(self, config):
+    def fix_config(self, config: dict[str, Any]) -> 'ioc.helper.Dict':
         for key, value in config.items():
             if isinstance(value, dict):
                 config[key] = self.fix_config(value)
@@ -28,10 +32,10 @@ class Loader(object):
         return ioc.helper.Dict(config)
 
 class YamlLoader(Loader):
-    def support(self, file):
+    def support(self, file: str) -> bool:
         return file[-3:] == 'yml'
 
-    def load(self, file, container_builder):
+    def load(self, file: str, container_builder: ContainerBuilder) -> None:
 
         try:
             data = yaml.load(open(file).read(), OrderedDictYAMLLoader)
@@ -42,7 +46,7 @@ class YamlLoader(Loader):
             if extension in ['parameters', 'services']:
                 continue
 
-            if config == None:
+            if config is None:
                 config = {}
 
             container_builder.add_extension(extension, self.fix_config(config.copy()))
@@ -100,24 +104,24 @@ class YamlLoader(Loader):
 
                 container_builder.add(id, definition)
 
-    def set_reference(self, value):
-        if ioc.helper.is_scalar(value) and value[0:1] == '@':
+    def set_reference(self, value: Any) -> Any:
+        if misc.is_scalar(value) and value[0:1] == '@':
             if '#' in value:
                 id, method = value.split("#")
                 return Reference(id[1:], method)
 
             return Reference(value[1:])
 
-        if ioc.helper.is_scalar(value) and value[0:2] == '#@':
+        if misc.is_scalar(value) and value[0:2] == '#@':
             return WeakReference(value[2:])
 
-        if ioc.helper.is_iterable(value):
+        if misc.is_iterable(value):
             return self.set_references(value)
 
         return value
 
-    def set_references(self, arguments):
-        for pos in ioc.helper.get_keys(arguments):
+    def set_references(self, arguments: Union[list[Any], dict[str, Any]]) -> Union[list[Any], dict[str, Any]]:
+        for pos in misc.get_keys(arguments):
             arguments[pos] = self.set_reference(arguments[pos])
 
         return arguments

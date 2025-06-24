@@ -16,12 +16,10 @@
 import ioc
 import os
 import unittest
-import yaml
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
 class HelperTest(unittest.TestCase):
-
     def test_build(self):
         container = ioc.build([
             "%s/../fixtures/services.yml" % current_dir
@@ -43,7 +41,6 @@ class HelperTest(unittest.TestCase):
         self.assertEquals('the argument 1', container.parameters.get('foo.foo'))
         self.assertEquals('parameter', container.parameters.get('inline'))
 
-
     def test_deepcopy(self):
         values = [
             {'sad': 1},
@@ -51,7 +48,7 @@ class HelperTest(unittest.TestCase):
         ]
 
         for value in values:
-            self.assertEquals(value, ioc.helper.deepcopy(value))
+            self.assertEquals(value, ioc.misc.deepcopy(value))
 
 
 class DictTest(unittest.TestCase):
