@@ -18,12 +18,10 @@ jobs:
       matrix:
         python-version: ['3.9', '3.11']
         extras: 
-          - 'tornado'
           - 'flask'
           - 'jinja2'
           - 'redis'
-          - 'twisted'
-          - 'tornado,flask,jinja2'
+          - 'flask,jinja2'
     
     steps:
     - uses: actions/checkout@v4
@@ -48,9 +46,9 @@ jobs:
 
         # Define which tests require which packages
         EXTRA_TEST_REQUIREMENTS = {
-            'tests.ioc.extra.tornado.test_handler': ['tornado'],
-            'tests.ioc.extra.tornado.test_router': ['tornado', 'werkzeug'],
-            'tests.ioc.extra.jinja.test_helper': ['jinja2'],
+            'tests.ioc_test.extra.jinja.test_helper': ['jinja2'],
+            'tests.ioc_test.extra.flask': ['flask'],
+            'tests.ioc_test.extra.redis': ['redis'],
         }
 
         def check_module_available(module_name):
