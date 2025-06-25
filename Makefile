@@ -2,16 +2,17 @@ all: build upload
 
 build:
 	pip install build twine
+	rm -rf dist/
 	python -m build
 	twine check dist/*
 
 upload-prod: build
 	export TWINE_USERNAME=__token__
-	python -m twine upload dist/*
+	bash -c 'read -s -p "Enter your Production PyPI token: " TWINE_PASSWORD; echo; export TWINE_PASSWORD; python -m twine upload dist/*'
 
 upload-test: build
 	export TWINE_USERNAME=__token__
-	python -m twine --repository testpypi upload dist/*
+	bash -c 'read -s -p "Enter your Test PyPI token: " TWINE_PASSWORD; echo; export TWINE_PASSWORD; python -m twine upload --repository testpypi dist/*'
 
 clean:
 	rm -rf build/ dist/ *.egg-info/ __pycache__/ .pytest_cache/ .mypy_cache/

@@ -48,10 +48,6 @@ dev = [
 test = [
     "pytest>=6.0",
 ]
-tornado = [
-    "tornado",
-    "werkzeug",
-]
 flask = [
     "flask",
     "werkzeug",
@@ -62,9 +58,6 @@ jinja2 = [
 redis = [
     "redis",
 ]
-twisted = [
-    "twisted",
-]
 
 [tool.setuptools]
 include-package-data = true
@@ -74,7 +67,6 @@ include = ["ioc*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yml", "*.yaml", "*.html"]
-
 
 [tool.mypy]
 python_version = "3.9"
@@ -95,9 +87,7 @@ ignore_errors = false
 [[tool.mypy.overrides]]
 module = [
     "yaml.*",
-    "werkzeug.*",
     "element.*",
-    "tornado.*",
     "redis.*",
     "jinja2.*",
     "flask.*",
