@@ -1,10 +1,17 @@
 all: build upload
 
 build:
+	pip install build twine
 	python -m build
+	twine check dist/*
 
-upload:
+upload-prod: build
+	export TWINE_USERNAME=__token__
 	python -m twine upload dist/*
+
+upload-test: build
+	export TWINE_USERNAME=__token__
+	python -m twine --repository testpypi upload dist/*
 
 clean:
 	rm -rf build/ dist/ *.egg-info/ __pycache__/ .pytest_cache/ .mypy_cache/
