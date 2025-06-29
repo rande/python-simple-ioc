@@ -25,7 +25,8 @@ class Extension(ioc.component.Extension):
         for extension in extensions:
             arguments = [[
                 Definition('ioc.locator.FileSystemLocator', arguments=["%s/resources/%s" % (container_builder.parameters.get('project.root_folder'), extension)]),
-                Definition('ioc.locator.PackageLocator', arguments=[extension], kwargs={'package_path': 'resources'})
+                Definition('ioc.locator.PackageLocator', arguments=[extension], kwargs={'package_path': 'resources'}),
+                Definition('ioc.locator.PackageLocator', arguments=[extension], kwargs={'package_path': ''})
             ]]
             
             locator_map[extension] = Definition('ioc.locator.ChoiceLocator', arguments=arguments)
