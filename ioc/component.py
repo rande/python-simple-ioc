@@ -20,6 +20,13 @@ from .misc import deepcopy, get_keys, is_iterable
 
 import importlib, inspect, re, logging
 
+HAS_PYDANTIC = False
+try:
+    from pydantic import BaseModel as PydanticBaseModel
+    HAS_PYDANTIC = True
+except ImportError:
+    pass
+
 class Reference(object):
     def __init__(self, id: str, method: Optional[str] = None) -> None:
         self.id = id
@@ -102,6 +109,22 @@ class ParameterResolver(object):
         self.stack: list[str] = []
 
     def _resolve(self, parameter: Any, parameter_holder: ParameterHolder) -> Any:
+        if HAS_PYDANTIC and isinstance(parameter, PydanticBaseModel):
+            # If the parameter is a Pydantic model, resolve its fields
+            def walk_and_modify(model):
+                for field in model.__fields__:
+                    value = getattr(model, field)
+                    if isinstance(value, PydanticBaseModel):
+                        parameter = walk_and_modify(value)  # Recursive call for nested models
+                    else:
+                        parameter = self.resolve(value, parameter_holder)
+                    
+                    setattr(model, field, parameter)
+                    
+                    return model
+                
+            return walk_and_modify(parameter)
+        
         if isinstance(parameter, (tuple)):
             parameter = list(parameter)
             for key in get_keys(parameter):
