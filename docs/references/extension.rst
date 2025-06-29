@@ -17,7 +17,7 @@ Here a flask extension, ``ioc.extra.flask.di.Extension``
 
             # load an external file defining services
             loader = ioc.loader.YamlLoader()
-            loader.load("%s/resources/config/flask.yml" % path, container_builder)
+            loader.load("%s/config/flask.yml" % path, container_builder)
 
             # set default parameters into the container to be reuse by the container builder
             # or by external services
