@@ -1,6 +1,6 @@
-all: build upload
+all: build
 
-build:
+build: clean
 	pip install build twine
 	rm -rf dist/
 	python -m build
