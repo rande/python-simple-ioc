@@ -121,10 +121,10 @@ class ParameterResolver(object):
                     
                     setattr(model, field, parameter)
                     
-                    return model
+                return model
                 
             return walk_and_modify(parameter)
-        
+                
         if isinstance(parameter, (tuple)):
             parameter = list(parameter)
             for key in get_keys(parameter):
