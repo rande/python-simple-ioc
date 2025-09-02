@@ -17,19 +17,16 @@ from typing import Any, Union
 import yaml
 
 from ioc.component import Definition, Reference, WeakReference, ContainerBuilder
-import ioc.helper
 import ioc.exceptions
-from . import misc
-
-from .misc import OrderedDictYAMLLoader
+import ioc.misc
 
 class Loader(object):
-    def fix_config(self, config: dict[str, Any]) -> 'ioc.helper.Dict':
+    def fix_config(self, config: dict[str, Any]) -> 'ioc.misc.Dict':
         for key, value in config.items():
             if isinstance(value, dict):
                 config[key] = self.fix_config(value)
 
-        return ioc.helper.Dict(config)
+        return ioc.misc.Dict(config)
 
 class YamlLoader(Loader):
     def support(self, file: str) -> bool:
@@ -42,7 +39,7 @@ class YamlLoader(Loader):
             content = f.read()
             
         try:
-            data = yaml.load(content, OrderedDictYAMLLoader)
+            data = yaml.load(content, ioc.misc.OrderedDictYAMLLoader)
         except yaml.scanner.ScannerError as e:
             raise ioc.exceptions.LoadingError("file %s, \nerror: %s" % (file, e))
 
@@ -109,23 +106,23 @@ class YamlLoader(Loader):
                 container_builder.add(id, definition)
 
     def set_reference(self, value: Any) -> Any:
-        if misc.is_scalar(value) and value[0:1] == '@':
+        if ioc.misc.is_string(value) and value[0:1] == '@':
             if '#' in value:
                 id, method = value.split("#")
                 return Reference(id[1:], method)
 
             return Reference(value[1:])
 
-        if misc.is_scalar(value) and value[0:2] == '#@':
+        if ioc.misc.is_string(value) and value[0:2] == '#@':
             return WeakReference(value[2:])
 
-        if misc.is_iterable(value):
+        if ioc.misc.is_iterable(value):
             return self.set_references(value)
 
         return value
 
     def set_references(self, arguments: Union[list[Any], dict[str, Any]]) -> Union[list[Any], dict[str, Any]]:
-        for pos in misc.get_keys(arguments):
+        for pos in ioc.misc.get_keys(arguments):
             arguments[pos] = self.set_reference(arguments[pos])
 
         return arguments

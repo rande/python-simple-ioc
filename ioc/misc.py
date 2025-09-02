@@ -64,7 +64,7 @@ def deepcopy(value: Any) -> Any:
 
     return value
 
-def is_scalar(value: Any) -> bool:
+def is_string(value: Any) -> bool:
     return isinstance(value, (str))
 
 def is_iterable(value: Any) -> bool:
