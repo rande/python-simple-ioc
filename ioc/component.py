@@ -112,7 +112,7 @@ class ParameterResolver(object):
         if HAS_PYDANTIC and isinstance(parameter, PydanticBaseModel):
             # If the parameter is a Pydantic model, resolve its fields
             def walk_and_modify(model):
-                for field in model.model_fields:
+                for field in type(model).model_fields:
                     value = getattr(model, field)
                     if isinstance(value, PydanticBaseModel):
                         parameter = walk_and_modify(value)  # Recursive call for nested models

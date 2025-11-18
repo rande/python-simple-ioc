@@ -24,6 +24,7 @@ clean:
 test: build-install
 	uv run flake8 ioc/ tests/
 	uv run python -m unittest discover -s tests -p "test_*.py"
+	uv run python -W error::DeprecationWarning -W error::PendingDeprecationWarning -W error::FutureWarning -m unittest discover -s tests -p "test_*.py"
 	LC_ALL=C.UTF-8 LANG=C.UTF-8 uv run sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
 
 test-strict: build-install
@@ -40,3 +41,4 @@ typecheck: build-install
 
 unittest: build-install
 	uv run python -m unittest discover -s tests -p "test_*.py" -v
+
